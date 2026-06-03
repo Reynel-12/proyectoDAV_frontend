@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="bitacora.aspx.cs" Inherits="proyecto_frontend.Pages.bitacora" MasterPageFile="~/AppShell.Master" Title="Bitácora — InvControl Pro" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="bitacora.aspx.cs" Inherits="proyecto_frontend.Pages.bitacora" MasterPageFile="~/AppShell.Master" Title="Bitácora — InvControl Pro" ResponseEncoding="utf-8" %>
 
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/bitacora.css") %>" />

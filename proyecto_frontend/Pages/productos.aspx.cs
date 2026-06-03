@@ -70,8 +70,8 @@ namespace proyecto_frontend
             dt.Columns.Add("StockEstado");    // "ok" | "low" | "critical"
 
             // Datos de ejemplo:
-            dt.Rows.Add(1, "ELEC-001", "Cable USB-C 2m trenzado nylon", 45.00m, 95.00m, 0, 20, "1", "Electrónica", "~/Uploads/Productos/ELEC-001.jpg", "ok");
-            dt.Rows.Add(2, "PAP-002", "Papel bond A4 resma 500 hojas", 85.00m, 120.00m, 0, 7, "2", "Papelería", "~/Uploads/Productos/PAP-002.jpg", "low");
+            dt.Rows.Add(1, "ELEC-001", "Cable USB-C 2m trenzado nylon", 45.00m, 95.00m, 0, 20, "1", "Electrónica", "", "ok");
+            dt.Rows.Add(2, "PAP-002", "Papel bond A4 resma 500 hojas", 85.00m, 120.00m, 0, 7, "2", "Papelería", "", "low");
             dt.Rows.Add(3, "LUB-001", "Aceite de motor sintético 5W-30 1L", 180.00m, 250.00m, 15, 2, "3", "Lubricantes", "", "critical");
             dt.Rows.Add(4, "REP-003", "Filtro de aire tipo A referencia FA-450", 90.00m, 145.00m, 15, 5, "4", "Repuestos", "", "low");
             dt.Rows.Add(5, "CON-004", "Tóner HP 85A original negro", 350.00m, 480.00m, 15, 1, "5", "Consumibles", "", "critical");

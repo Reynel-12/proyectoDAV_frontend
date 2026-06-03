@@ -57,7 +57,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--sp-lg);
+    padding: clamp(16px, 3vw, 32px);
     background: var(--clr-navy-950);
 }
 
@@ -383,80 +383,84 @@ html, body {
         text-decoration: none;
     }
 
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
+.form-footer a:hover {
+    text-decoration: underline;
+}
 
 /* ─── RESPONSIVE ─── */
 
-/* Tablet: stack panels vertically */
-@media (max-width: 768px) {
+/* Large screens: show the full split layout */
+@media (min-width: 1024px) {
     .login-card {
-        grid-template-columns: 1fr;
-        max-width: 480px;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 1fr);
     }
 
     .panel-brand {
-        padding: var(--sp-xl) var(--sp-xl);
-        flex-direction: row;
-        align-items: center;
-        gap: var(--sp-lg);
+        display: flex;
+    }
+}
+
+/* Tablet and below: form-only layout */
+@media (max-width: 1023.98px) {
+    .login-card {
+        grid-template-columns: 1fr;
+        max-width: 520px;
     }
 
-    .brand-top {
-        flex-shrink: 0;
-    }
-
-    .hero-title {
-        font-size: 17px;
-    }
-
-    .hero-desc {
-        font-size: 12px;
-    }
-
-    .stats-row {
-        display: none;
-    }
-
-    .panel-brand::before,
-    .panel-brand::after {
+    .panel-brand {
         display: none;
     }
 
     .panel-form {
-        padding: var(--sp-xl) var(--sp-xl);
+        padding: clamp(24px, 4vw, 36px);
+    }
+
+    .form-heading {
+        font-size: 21px;
+    }
+
+    .form-subheading {
+        margin-bottom: 28px;
     }
 }
 
 /* Mobile */
 @media (max-width: 480px) {
     .page-shell {
-        padding: var(--sp-md);
-        align-items: flex-start;
-        padding-top: var(--sp-xl);
+        padding: 12px;
+        align-items: stretch;
     }
 
     .login-card {
-        border-radius: var(--radius-lg);
-    }
-
-    .panel-brand {
-        padding: var(--sp-lg) var(--sp-md);
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0;
-    }
-
-    .brand-body {
-        margin-top: var(--sp-lg);
+        border-radius: 14px;
+        max-width: 100%;
     }
 
     .panel-form {
-        padding: var(--sp-lg) var(--sp-md);
+        padding: 22px 18px;
     }
 
     .form-heading {
         font-size: 18px;
+    }
+
+    .form-subheading {
+        font-size: 12px;
+        margin-bottom: 22px;
+    }
+
+    .row-between {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .link-forgot {
+        font-size: 11px;
+    }
+
+    .btn-submit {
+        height: 46px;
     }
 }

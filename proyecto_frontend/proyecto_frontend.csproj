@@ -116,6 +116,8 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="AppShell.Master" />
+    <Content Include="CSS\app-shell.css" />
     <Content Include="CSS\bitacora.css" />
     <Content Include="CSS\categorias.css" />
     <Content Include="CSS\dashboard.css" />
@@ -123,6 +125,7 @@
     <Content Include="CSS\nuevaCategoria.css" />
     <Content Include="CSS\nuevoProducto.css" />
     <Content Include="CSS\productos.css" />
+    <Content Include="JS\app-shell.js" />
     <Content Include="JS\bitacora.js" />
     <Content Include="JS\categorias.js" />
     <Content Include="JS\nuevaCategoria.js" />

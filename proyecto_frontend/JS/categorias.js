@@ -1,14 +1,5 @@
 ﻿(function () {
-    /* sidebar */
-    var menuBtn = document.getElementById('menuBtn');
-    var sidebar = document.getElementById('sidebar');
-    var overlay = document.getElementById('sidebarOverlay');
-    function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('active'); menuBtn.setAttribute('aria-expanded', 'true'); }
-    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); menuBtn.setAttribute('aria-expanded', 'false'); }
-    menuBtn.addEventListener('click', function () { sidebar.classList.contains('open') ? closeSidebar() : openSidebar(); });
-    overlay.addEventListener('click', closeSidebar);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSidebar(); closeModal(); } });
-
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && typeof closeModal === 'function') { closeModal(); } });
     /* view tabs */
     var tabCards = document.getElementById('tabCards');
     var tabTable = document.getElementById('tabTable');
@@ -105,3 +96,4 @@
     if (qs.get('editada') === '1') showToast('Categoría actualizada correctamente.', 'success');
     if (qs.get('eliminada') === '1') showToast('Categoría eliminada correctamente.', 'success');
 })();
+

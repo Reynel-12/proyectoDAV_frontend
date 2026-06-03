@@ -1,36 +1,57 @@
 ﻿(function () {
 
-    /* ══ Sidebar toggle ══ */
-    var menuBtn = document.getElementById('menuBtn');
-    var sidebar = document.getElementById('sidebar');
-    var overlay = document.getElementById('sidebarOverlay');
-    function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('active'); menuBtn.setAttribute('aria-expanded', 'true'); }
-    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); menuBtn.setAttribute('aria-expanded', 'false'); }
-    menuBtn.addEventListener('click', function () { sidebar.classList.contains('open') ? closeSidebar() : openSidebar(); });
-    overlay.addEventListener('click', closeSidebar);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSidebar(); closeModal(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && typeof closeModal === 'function') { closeModal(); } });
 
-    /* ══ View toggle (desktop) ══ */
+/* ══ View toggle (desktop) ══ */
     var btnTable = document.getElementById('btnTableView');
     var btnCard = document.getElementById('btnCardView');
     var tableView = document.getElementById('tableView');
     var cardView = document.getElementById('cardView');
     var tableFooterEl = document.getElementById('tableFooterEl');
+    var mobileMq = window.matchMedia('(max-width: 768px)');
+    var currentView = mobileMq.matches ? 'card' : 'table';
+
+    function setView(view) {
+        currentView = view;
+        if (view === 'card') {
+            tableView.classList.add('hidden');
+            cardView.classList.add('visible');
+            tableFooterEl.style.display = 'none';
+            btnCard.classList.add('active');
+            btnCard.setAttribute('aria-pressed', 'true');
+            btnTable.classList.remove('active');
+            btnTable.setAttribute('aria-pressed', 'false');
+        } else {
+            tableView.classList.remove('hidden');
+            cardView.classList.remove('visible');
+            tableFooterEl.style.display = '';
+            btnTable.classList.add('active');
+            btnTable.setAttribute('aria-pressed', 'true');
+            btnCard.classList.remove('active');
+            btnCard.setAttribute('aria-pressed', 'false');
+        }
+    }
 
     btnTable.addEventListener('click', function () {
-        tableView.classList.remove('hidden');
-        cardView.classList.remove('visible');
-        tableFooterEl.style.display = '';
-        btnTable.classList.add('active'); btnTable.setAttribute('aria-pressed', 'true');
-        btnCard.classList.remove('active'); btnCard.setAttribute('aria-pressed', 'false');
+        if (mobileMq.matches) return;
+        setView('table');
     });
     btnCard.addEventListener('click', function () {
-        tableView.classList.add('hidden');
-        cardView.classList.add('visible');
-        tableFooterEl.style.display = 'none';
-        btnCard.classList.add('active'); btnCard.setAttribute('aria-pressed', 'true');
-        btnTable.classList.remove('active'); btnTable.setAttribute('aria-pressed', 'false');
+        if (mobileMq.matches) return;
+        setView('card');
     });
+
+    if (mobileMq.matches) {
+        setView('card');
+    } else {
+        setView('table');
+    }
+
+    if (typeof mobileMq.addEventListener === 'function') {
+        mobileMq.addEventListener('change', function (event) {
+            setView(event.matches ? 'card' : currentView);
+        });
+    }
 
     /* ══ Client-side search + filter ══ */
     var searchInput = document.getElementById('searchInput');
@@ -183,3 +204,5 @@
     if (qs.get('eliminado') === '1') showToast('Producto eliminado correctamente.', 'success');
 
 })();
+
+

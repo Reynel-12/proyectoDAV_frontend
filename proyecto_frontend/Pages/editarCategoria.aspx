@@ -1,118 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="editarCategoria.aspx.cs" Inherits="proyecto_frontend.Pages.editarCategoria" %>
-
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Editar categoría</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="~/CSS/nuevaCategoria.css" />
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div class="app-shell">
-
-            <header class="topbar">
-                <button class="tb-menu-btn" id="menuBtn" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="sidebar">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                    </svg>
-                </button>
-                <div class="tb-logo" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="2" y="2" width="9" height="9" rx="2" fill="white" opacity=".95" />
-                        <rect x="13" y="2" width="9" height="9" rx="2" fill="white" opacity=".6" />
-                        <rect x="2" y="13" width="9" height="9" rx="2" fill="white" opacity=".6" />
-                        <rect x="13" y="13" width="9" height="9" rx="2" fill="white" opacity=".3" />
-                    </svg>
-                </div>
-                <span class="tb-brand">InvControl Pro</span>
-                <div class="tb-spacer"></div>
-                <div class="tb-status" role="status" aria-label="Estado del sistema: en línea">
-                    <div class="tb-status-dot"></div>
-                    En línea
-                </div>
-                <div class="tb-avatar" title="Carlos Admin" aria-label="Usuario: Carlos Admin">CA</div>
-            </header>
-
-            <div class="body-wrap">
-                <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
-
-                <nav class="sidebar" id="sidebar" aria-label="Navegación principal">
-                    <div class="nav-section">
-                        <span class="nav-section-label">Principal</span>
-                        <a class="nav-item" href="Dashboard.aspx">
-                            <span class="nav-icon" aria-hidden="true">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                </svg>
-                            </span>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </div>
-                    <div class="nav-section">
-                        <span class="nav-section-label">Inventario</span>
-                        <a class="nav-item" href="Productos.aspx">
-                            <span class="nav-icon" aria-hidden="true">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 6H20V18H4V6Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <path d="M8 6V4H16V6" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                </svg>
-                            </span>
-                            <span class="nav-text">Productos</span>
-                        </a>
-                        <a class="nav-item active" href="categorias.aspx" aria-current="page">
-                            <span class="nav-icon" aria-hidden="true">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 6L10 4L20 6L22 12L20 18L14 20L4 18L2 12L4 6Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                </svg>
-                            </span>
-                            <span class="nav-text">Categorías</span>
-                        </a>
-                    </div>
-                    <hr class="nav-divider" />
-                    <div class="nav-section">
-                        <span class="nav-section-label">Movimientos</span>
-                        <a class="nav-item" href="Bitacora.aspx">
-                            <span class="nav-icon" aria-hidden="true">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4 6H20V18H4V6Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <path d="M8 6V4H16V6" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <path d="M8 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                    <path d="M8 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                </svg>
-                            </span>
-                            <span class="nav-text">Bitácora</span>
-                        </a>
-                    </div>
-                    <hr class="nav-divider" />
-                    <div class="nav-section">
-                        <span class="nav-section-label">Sistema</span>
-                        <a class="nav-item" href="Login.aspx">
-                            <span class="nav-icon" aria-hidden="true">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M15 3H19C20.1 3 21 3.9 21 5V19C21 20.1 20.1 21 19 21H15" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                    <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                    <path d="M15 12H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                </svg>
-                            </span>
-                            <span class="nav-text">Cerrar sesión</span>
-                        </a>
-                    </div>
-                </nav>
-
-                <main class="main-content" id="main-content">
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="editarCategoria.aspx.cs" Inherits="proyecto_frontend.Pages.editarCategoria" MasterPageFile="~/AppShell.Master" Title="Editar categoría" %>
+<asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
+    <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/nuevaCategoria.css") %>" />
+</asp:Content>
+<asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
+<main class="main-content" id="main-content">
 
                     <div class="page-header">
                         <div class="page-header-left">
@@ -225,9 +116,8 @@
                         </div>
                     </asp:Panel>
                 </main>
-            </div>
-        </div>
-    </form>
-    <script src="JS/nuevaCategoria.js"></script>
-</body>
-</html>
+</asp:Content>
+<asp:Content ID="PageScripts" ContentPlaceHolderID="PageScripts" runat="server">
+    <script src="<%= ResolveUrl("~/JS/nuevaCategoria.js") %>"></script>
+</asp:Content>
+

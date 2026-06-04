@@ -135,7 +135,7 @@
                         <asp:CheckBox ID="chkRemember" runat="server" />
                         Recordarme
                     </label>
-                    <a href="restablecerContraseña.aspx" class="link-forgot">¿Olvidaste tu contraseña?</a>
+                    <a href="restablecerContrasena.aspx" class="link-forgot">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <!-- Botón login -->

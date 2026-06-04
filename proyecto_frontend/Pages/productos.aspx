@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="productos.aspx.cs" Inherits="proyecto_frontend.productos" MasterPageFile="~/AppShell.Master" Title="Productos - InvControl Pro" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="productos.aspx.cs" Inherits="proyecto_frontend.productos" MasterPageFile="~/AppShell.Master" Title="Productos" %>
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/productos.css") %>" />
 </asp:Content>

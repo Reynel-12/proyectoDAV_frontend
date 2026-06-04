@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="categorias.aspx.cs" Inherits="proyecto_frontend.Pages.categorias" MasterPageFile="~/AppShell.Master" Title="Categorías - InvControl Pro" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="categorias.aspx.cs" Inherits="proyecto_frontend.Pages.categorias" MasterPageFile="~/AppShell.Master" Title="Categorías" %>
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/categorias.css") %>" />
 </asp:Content>

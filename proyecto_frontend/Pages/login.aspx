@@ -135,7 +135,7 @@
                         <asp:CheckBox ID="chkRemember" runat="server" />
                         Recordarme
                     </label>
-                    <a href="ForgotPassword.aspx" class="link-forgot">¿Olvidaste tu contraseña?</a>
+                    <a href="restablecerContraseña.aspx" class="link-forgot">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <!-- Botón login -->
@@ -149,10 +149,6 @@
 
             </asp:Panel>
 
-            <p class="form-footer">
-                ¿Problemas para acceder?
-                <a href="mailto:soporte@tuempresa.com">Contacta soporte</a>
-            </p>
         </div>
 
     </div>

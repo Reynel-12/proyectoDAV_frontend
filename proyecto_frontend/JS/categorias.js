@@ -6,18 +6,30 @@
     var viewCards = document.getElementById('viewCards');
     var viewTable = document.getElementById('viewTable');
 
-    tabCards.addEventListener('click', function () {
+    function showCardsView() {
         tabCards.classList.add('active'); tabCards.setAttribute('aria-selected', 'true');
         tabTable.classList.remove('active'); tabTable.setAttribute('aria-selected', 'false');
         viewCards.style.display = ''; viewTable.classList.remove('visible');
         applySearch();
-    });
-    tabTable.addEventListener('click', function () {
+    }
+
+    function showTableView() {
         tabTable.classList.add('active'); tabTable.setAttribute('aria-selected', 'true');
         tabCards.classList.remove('active'); tabCards.setAttribute('aria-selected', 'false');
         viewTable.classList.add('visible'); viewCards.style.display = 'none';
         applySearch();
+    }
+
+    tabCards.addEventListener('click', function (e) {
+        e.preventDefault();
+        showCardsView();
     });
+    tabTable.addEventListener('click', function (e) {
+        e.preventDefault();
+        showTableView();
+    });
+
+    showCardsView();
 
     /* search */
     var searchInput = document.getElementById('searchInput');

@@ -79,7 +79,7 @@
 
                     <!-- View tabs -->
                     <div class="view-tabs" role="tablist" aria-label="Vista de categorías">
-                        <button class="view-tab active" id="tabCards" role="tab" aria-selected="true" aria-controls="viewCards">
+                        <button type="button" class="view-tab active" id="tabCards" role="tab" aria-selected="true" aria-controls="viewCards">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
                                 <rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -88,7 +88,7 @@
                             </svg>
                             Tarjetas
                         </button>
-                        <button class="view-tab" id="tabTable" role="tab" aria-selected="false" aria-controls="viewTable">
+                        <button type="button" class="view-tab" id="tabTable" role="tab" aria-selected="false" aria-controls="viewTable">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
                                 <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>

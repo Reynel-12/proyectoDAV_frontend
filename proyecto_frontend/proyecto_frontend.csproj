@@ -126,11 +126,13 @@
     <Content Include="CSS\nuevoProducto.css" />
     <Content Include="CSS\productos.css" />
     <Content Include="CSS\restablecerContrasena.css" />
+    <Content Include="CSS\usuarios.css" />
     <Content Include="JS\app-shell.js" />
     <Content Include="JS\bitacora.js" />
     <Content Include="JS\categorias.js" />
     <Content Include="JS\nuevaCategoria.js" />
     <Content Include="JS\restablecerContrasena.js" />
+    <Content Include="JS\usuarios.js" />
     <Content Include="Pages\bitacora.aspx" />
     <Content Include="Pages\categorias.aspx" />
     <Content Include="Pages\dashboard.aspx" />
@@ -146,6 +148,7 @@
     <Content Include="Pages\nuevoProducto.aspx" />
     <Content Include="Pages\productos.aspx" />
     <Content Include="Pages\restablecerContrasena.aspx" />
+    <Content Include="Pages\usuarios.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -282,6 +285,13 @@
     </Compile>
     <Compile Include="Pages\restablecerContrasena.aspx.designer.cs">
       <DependentUpon>restablecerContrasena.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\usuarios.aspx.cs">
+      <DependentUpon>usuarios.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\usuarios.aspx.designer.cs">
+      <DependentUpon>usuarios.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">

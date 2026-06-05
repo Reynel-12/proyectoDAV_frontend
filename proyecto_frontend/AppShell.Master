@@ -126,6 +126,23 @@
                     <hr class="nav-divider" />
 
                     <div class="nav-section">
+                        <span class="nav-section-label">Usuarios</span>
+                        <a class="<%= NavCss("usuarios.aspx") %>" href="<%= ResolveUrl("~/Pages/usuarios.aspx") %>" <%= NavCurrent("usuarios.aspx") %>>
+                            <span class="nav-icon" aria-hidden="true">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 21V19C16 17.9 15.1 17 14 17H6C4.9 17 4 17.9 4 19V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                    <circle cx="10" cy="8" r="4" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                    <path d="M20 21V19C20 17.2 18.8 15.7 17 15.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                    <path d="M17 4.8C18.8 5.3 20 6.8 20 8.5C20 10.2 18.8 11.7 17 12.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                </svg>
+                            </span>
+                            <span class="nav-text">Usuarios</span>
+                        </a>
+                    </div>
+
+                    <hr class="nav-divider" />
+
+                    <div class="nav-section">
                         <span class="nav-section-label">Sistema</span>
                         <a class="nav-item" href="<%= ResolveUrl("~/Pages/login.aspx") %>">
                             <span class="nav-icon" aria-hidden="true">

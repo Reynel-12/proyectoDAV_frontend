@@ -13,6 +13,13 @@
                     cuentas registradas en la plataforma
                 </p>
             </div>
+            <a class="btn-new" href="nuevoUsuario.aspx" aria-label="Crear nuevo usuario">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                Nuevo usuario
+            </a>
         </div>
 
         <section class="kpi-grid" aria-label="Resumen de usuarios">
@@ -120,6 +127,7 @@
                             <th class="sortable" data-col="estado" scope="col">Estado<span class="sort-icon">⇕</span></th>
                             <th class="sortable" data-col="registro" scope="col">Registro<span class="sort-icon">⇕</span></th>
                             <th class="sortable" data-col="ultimoacceso" scope="col">Último acceso<span class="sort-icon">⇕</span></th>
+                            <th scope="col" class="th-actions">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -156,6 +164,24 @@
                                         <div class="text-strong"><%# Eval("UltimoAcceso") %></div>
                                         <div class="text-muted"><%# Eval("Actividad") %></div>
                                     </td>
+                                    <td class="td-actions">
+                                        <div class="action-wrap">
+                                            <a class="btn-action edit" href='nuevoUsuario.aspx?id=<%# Eval("Id") %>' title='Editar usuario <%# Eval("NombreCompleto") %>' aria-label='Editar usuario <%# Eval("NombreCompleto") %>'>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                                </svg>
+                                            </a>
+                                            <button class="btn-action del" type="button" title='Eliminar usuario <%# Eval("NombreCompleto") %>' aria-label='Eliminar usuario <%# Eval("NombreCompleto") %>' onclick="openDeleteModal('<%# Eval("Id") %>','<%# Server.HtmlEncode(Eval("NombreCompleto").ToString()) %>','<%# Server.HtmlEncode(Eval("Correo").ToString()) %>','<%# Eval("Iniciales") %>','<%# Eval("AvatarClase") %>')">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                                    <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                                    <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                                    <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                                    <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             </ItemTemplate>
                         </asp:Repeater>
@@ -171,6 +197,13 @@
                     </div>
                     <div class="empty-title">No hay usuarios registrados</div>
                     <div class="empty-desc">Cuando existan cuentas creadas en la plataforma, aparecerán listadas aquí.</div>
+                    <a class="btn-new" href="nuevoUsuario.aspx">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Crear primer usuario
+                    </a>
                 </asp:Panel>
             </div>
 
@@ -221,11 +254,75 @@
                                 <span class="text-muted"><%# Eval("Origen") %></span>
                                 <span class="text-strong"><%# Eval("Actividad") %></span>
                             </div>
+
+                            <div class="card-actions">
+                                <a class="btn-card-action edit" href='nuevoUsuario.aspx?id=<%# Eval("Id") %>'>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                        <path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                    </svg>
+                                    Editar
+                                </a>
+                                <button class="btn-card-action del" type="button" onclick="openDeleteModal('<%# Eval("Id") %>','<%# Server.HtmlEncode(Eval("NombreCompleto").ToString()) %>','<%# Server.HtmlEncode(Eval("Correo").ToString()) %>','<%# Eval("Iniciales") %>','<%# Eval("AvatarClase") %>')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                        <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                        <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                                    </svg>
+                                    Eliminar
+                                </button>
+                            </div>
                         </article>
                     </ItemTemplate>
                 </asp:Repeater>
             </div>
         </section>
+
+        <asp:HiddenField ID="hfDeleteId" runat="server" ClientIDMode="Static" />
+        <asp:Button ID="btnDeleteConfirm" runat="server" ClientIDMode="Static" Style="display:none" OnClick="btnDeleteConfirm_Click" CausesValidation="false" />
+
+        <div class="modal-backdrop" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-icon-wrap" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                            <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="modal-title" id="deleteModalTitle">Eliminar usuario</div>
+                        <div class="modal-subtitle">Esta acción retirará el usuario de la lista actual.</div>
+                    </div>
+                </div>
+
+                <div class="modal-user-ref">
+                    <div class="modal-user-avatar ua-blue" id="modalUserAvatar">US</div>
+                    <div>
+                        <div class="modal-user-name" id="modalUserName">Usuario</div>
+                        <div class="modal-user-email" id="modalUserEmail">correo@dominio.com</div>
+                    </div>
+                </div>
+
+                <div class="modal-warning">
+                    Verifica que el usuario ya no necesite acceso antes de confirmar la eliminación.
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel" id="btnModalCancel">Cancelar</button>
+                    <button type="button" class="btn-modal-delete" id="btnModalDelete">Eliminar usuario</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite">
+            <span class="toast-icon" id="toastIcon">✔</span>
+            <span id="toastMsg">Acción completada</span>
+        </div>
     </main>
 </asp:Content>
 

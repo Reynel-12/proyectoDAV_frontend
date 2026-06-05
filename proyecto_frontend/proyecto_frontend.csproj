@@ -124,6 +124,7 @@
     <Content Include="CSS\login.css" />
     <Content Include="CSS\nuevaCategoria.css" />
     <Content Include="CSS\nuevoProducto.css" />
+    <Content Include="CSS\nuevoUsuario.css" />
     <Content Include="CSS\productos.css" />
     <Content Include="CSS\restablecerContrasena.css" />
     <Content Include="CSS\usuarios.css" />
@@ -132,6 +133,7 @@
     <Content Include="JS\categorias.js" />
     <Content Include="JS\nuevaCategoria.js" />
     <Content Include="JS\restablecerContrasena.js" />
+    <Content Include="JS\nuevoUsuario.js" />
     <Content Include="JS\usuarios.js" />
     <Content Include="Pages\bitacora.aspx" />
     <Content Include="Pages\categorias.aspx" />
@@ -146,6 +148,7 @@
     <Content Include="Pages\login.aspx" />
     <Content Include="Pages\nuevaCategoria.aspx" />
     <Content Include="Pages\nuevoProducto.aspx" />
+    <Content Include="Pages\nuevoUsuario.aspx" />
     <Content Include="Pages\productos.aspx" />
     <Content Include="Pages\restablecerContrasena.aspx" />
     <Content Include="Pages\usuarios.aspx" />
@@ -271,6 +274,13 @@
     </Compile>
     <Compile Include="Pages\nuevoProducto.aspx.designer.cs">
       <DependentUpon>nuevoProducto.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\nuevoUsuario.aspx.cs">
+      <DependentUpon>nuevoUsuario.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\nuevoUsuario.aspx.designer.cs">
+      <DependentUpon>nuevoUsuario.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\productos.aspx.cs">
       <DependentUpon>productos.aspx</DependentUpon>

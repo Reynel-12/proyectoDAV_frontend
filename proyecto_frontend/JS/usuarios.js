@@ -31,11 +31,15 @@
 
     if (btnTable && btnCard) {
         btnTable.addEventListener('click', function () {
-            if (!mobileMq.matches) setView('table');
+            if (!mobileMq.matches) {
+                setView('table');
+            }
         });
 
         btnCard.addEventListener('click', function () {
-            if (!mobileMq.matches) setView('card');
+            if (!mobileMq.matches) {
+                setView('card');
+            }
         });
     }
 
@@ -80,7 +84,9 @@
                 cards[index].style.display = show ? '' : 'none';
             }
 
-            if (show) visible++;
+            if (show) {
+                visible++;
+            }
         });
 
         if (resultsCount) {
@@ -112,12 +118,16 @@
             document.querySelectorAll('.data-table th.sortable').forEach(function (item) {
                 item.classList.remove('sort-asc', 'sort-desc');
                 var icon = item.querySelector('.sort-icon');
-                if (icon) icon.textContent = '⇕';
+                if (icon) {
+                    icon.textContent = '⇕';
+                }
             });
 
             header.classList.add(sortState.asc ? 'sort-asc' : 'sort-desc');
             var headerIcon = header.querySelector('.sort-icon');
-            if (headerIcon) headerIcon.textContent = sortState.asc ? '↑' : '↓';
+            if (headerIcon) {
+                headerIcon.textContent = sortState.asc ? '↑' : '↓';
+            }
 
             var tbody = document.getElementById('tableBody');
             var rows = getRows();
@@ -137,4 +147,93 @@
             applyFilters();
         });
     });
+
+    var modal = document.getElementById('deleteModal');
+    var modalName = document.getElementById('modalUserName');
+    var modalEmail = document.getElementById('modalUserEmail');
+    var modalAvatar = document.getElementById('modalUserAvatar');
+    var btnCancel = document.getElementById('btnModalCancel');
+    var btnDelete = document.getElementById('btnModalDelete');
+    var hfDeleteId = document.getElementById('hfDeleteId');
+    var btnDeleteConfirm = document.getElementById('btnDeleteConfirm');
+
+    window.openDeleteModal = function (id, nombre, correo, iniciales, avatarClase) {
+        if (!modal || !hfDeleteId) {
+            return;
+        }
+
+        hfDeleteId.value = id;
+        if (modalName) modalName.textContent = nombre;
+        if (modalEmail) modalEmail.textContent = correo;
+        if (modalAvatar) {
+            modalAvatar.textContent = iniciales;
+            modalAvatar.className = 'modal-user-avatar ' + avatarClase;
+        }
+
+        modal.classList.add('open');
+        if (btnDelete) {
+            btnDelete.focus();
+        }
+    };
+
+    function closeModal() {
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.remove('open');
+        if (hfDeleteId) {
+            hfDeleteId.value = '';
+        }
+    }
+
+    if (btnCancel) {
+        btnCancel.addEventListener('click', closeModal);
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    if (btnDelete) {
+        btnDelete.addEventListener('click', function () {
+            closeModal();
+            if (btnDeleteConfirm) {
+                btnDeleteConfirm.click();
+            }
+        });
+    }
+
+    function showToast(msg, type) {
+        var toast = document.getElementById('toast');
+        var toastMsg = document.getElementById('toastMsg');
+        var toastIcon = document.getElementById('toastIcon');
+
+        if (!toast || !toastMsg || !toastIcon) {
+            return;
+        }
+
+        toast.className = 'toast ' + (type || 'success');
+        toastIcon.textContent = type === 'error' ? '✖' : '✔';
+        toastMsg.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(function () {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
+    var qs = new URLSearchParams(window.location.search);
+    if (qs.get('nuevo') === '1') showToast('Usuario creado correctamente.', 'success');
+    if (qs.get('editado') === '1') showToast('Usuario actualizado correctamente.', 'success');
+    if (qs.get('eliminado') === '1') showToast('Usuario eliminado correctamente.', 'success');
 })();

@@ -63,5 +63,15 @@ namespace proyecto_frontend.Pages
         /// rptUsuariosCard control.
         /// </summary>
         protected global::System.Web.UI.WebControls.Repeater rptUsuariosCard;
+
+        /// <summary>
+        /// hfDeleteId control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.HiddenField hfDeleteId;
+
+        /// <summary>
+        /// btnDeleteConfirm control.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Button btnDeleteConfirm;
     }
 }

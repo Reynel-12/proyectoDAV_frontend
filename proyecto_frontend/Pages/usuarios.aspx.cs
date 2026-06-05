@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace proyecto_frontend.Pages
 {
@@ -135,6 +136,16 @@ namespace proyecto_frontend.Pages
                 origen,
                 actividad,
                 avatarClase);
+        }
+
+        protected void btnDeleteConfirm_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(hfDeleteId.Value, out int id))
+            {
+                return;
+            }
+
+            Response.Redirect("usuarios.aspx?eliminado=1");
         }
     }
 }

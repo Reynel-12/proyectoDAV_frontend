@@ -126,7 +126,6 @@
                             <th class="sortable" data-col="rol" scope="col">Rol<span class="sort-icon">⇕</span></th>
                             <th class="sortable" data-col="estado" scope="col">Estado<span class="sort-icon">⇕</span></th>
                             <th class="sortable" data-col="registro" scope="col">Registro<span class="sort-icon">⇕</span></th>
-                            <th class="sortable" data-col="ultimoacceso" scope="col">Último acceso<span class="sort-icon">⇕</span></th>
                             <th scope="col" class="th-actions">Acciones</th>
                         </tr>
                     </thead>
@@ -146,23 +145,16 @@
                                             <div class='user-avatar <%# Eval("AvatarClase") %>' aria-hidden="true"><%# Eval("Iniciales") %></div>
                                             <div>
                                                 <div class="user-name"><%# Eval("NombreCompleto") %></div>
-                                                <div class="user-meta"><%# Eval("Telefono") %></div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="text-strong"><%# Eval("Correo") %></div>
-                                        <div class="text-muted"><%# Eval("Ciudad") %></div>
                                     </td>
                                     <td><span class='role-pill <%# Eval("RolKey") %>'><%# Eval("Rol") %></span></td>
                                     <td><span class='status-pill <%# Eval("EstadoKey") %>'><span class="status-dot"></span><%# Eval("Estado") %></span></td>
                                     <td>
                                         <div class="text-strong"><%# Eval("FechaRegistro") %></div>
-                                        <div class="text-muted"><%# Eval("Origen") %></div>
-                                    </td>
-                                    <td>
-                                        <div class="text-strong"><%# Eval("UltimoAcceso") %></div>
-                                        <div class="text-muted"><%# Eval("Actividad") %></div>
                                     </td>
                                     <td class="td-actions">
                                         <div class="action-wrap">
@@ -232,28 +224,32 @@
                             </div>
 
                             <div class="user-card-grid">
-                                <div>
+                                <!-- <div>
                                     <div class="meta-label">Teléfono</div>
                                     <div class="meta-value"><%# Eval("Telefono") %></div>
                                 </div>
-                                <div>
+                                     
+                               <!-- <div>
                                     <div class="meta-label">Ciudad</div>
                                     <div class="meta-value"><%# Eval("Ciudad") %></div>
                                 </div>
+                                    -->
                                 <div>
                                     <div class="meta-label">Registro</div>
                                     <div class="meta-value"><%# Eval("FechaRegistro") %></div>
                                 </div>
-                                <div>
+                               <!-- <div>
                                     <div class="meta-label">Último acceso</div>
                                     <div class="meta-value"><%# Eval("UltimoAcceso") %></div>
                                 </div>
+                                   -->
                             </div>
 
-                            <div class="user-card-footer">
+                           <!-- <div class="user-card-footer">
                                 <span class="text-muted"><%# Eval("Origen") %></span>
                                 <span class="text-strong"><%# Eval("Actividad") %></span>
                             </div>
+                                -->
 
                             <div class="card-actions">
                                 <a class="btn-card-action edit" href='nuevoUsuario.aspx?id=<%# Eval("Id") %>'>

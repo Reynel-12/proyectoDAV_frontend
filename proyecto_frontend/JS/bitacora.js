@@ -1,7 +1,4 @@
-﻿(function () {
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && typeof closeModal === 'function') { closeModal(); } });
-
-    /* ── relative dates ── */
+(function () {
     function relativeDate(isoStr) {
         if (!isoStr) return '';
         var d = new Date(isoStr);
@@ -13,21 +10,22 @@
         if (diff < 604800) return 'Hace ' + Math.floor(diff / 86400) + ' días';
         return d.toLocaleDateString('es-HN');
     }
+
     document.querySelectorAll('.date-rel[data-ts]').forEach(function (el) {
         el.textContent = relativeDate(el.getAttribute('data-ts'));
     });
 
-    /* ── data store from server ── */
-    var hfJson = document.getElementById('<%= hfMovimientosJson.ClientID %>');
+    var hfJson = document.getElementById('hfMovimientosJson');
     var movData = {};
     try {
         var arr = JSON.parse(hfJson ? hfJson.value : '[]');
         arr.forEach(function (m) { movData[String(m.Id)] = m; });
     } catch (_) { }
 
-    /* ── filter logic ── */
     var allRows = Array.from(document.querySelectorAll('#tableBody .data-row'));
     var allCards = Array.from(document.querySelectorAll('#cardList .log-card'));
+    var currentPage = 1;
+    var pageSize = 25;
 
     function getFilters() {
         return {
@@ -53,30 +51,37 @@
         return true;
     }
 
-    var currentPage = 1;
-    var pageSize = 25;
+    function updateResultsCount(vis, total) {
+        var el = document.getElementById('resultsCount');
+        if (el) el.textContent = vis;
+        var info = document.getElementById('resultsInfo');
+        if (info) info.innerHTML = 'Mostrando <strong id="resultsCount">' + vis + '</strong> de ' + total + ' registros';
+    }
 
-    function applyFilters() {
-        var f = getFilters();
-        var visible = [];
+    function updateActiveChips(f) {
+        var wrap = document.getElementById('activeFilters');
+        wrap.innerHTML = '';
+        var hasAny = false;
 
-        allRows.forEach(function (row) {
-            var id = row.getAttribute('data-id');
-            var detRow = document.getElementById('detail-' + id);
-            var matches = rowMatches(row, f);
-            row.style.display = matches ? '' : 'none';
-            if (detRow) detRow.style.display = matches ? '' : 'none';
-            if (matches) visible.push(row);
-        });
+        function addChip(label, clearFn) {
+            hasAny = true;
+            var chip = document.createElement('div');
+            chip.className = 'filter-chip';
+            chip.innerHTML = label + '<button class="filter-chip-remove" aria-label="Quitar filtro">&#10005;</button>';
+            chip.querySelector('button').addEventListener('click', function () {
+                clearFn();
+                applyFilters();
+            });
+            wrap.appendChild(chip);
+        }
 
-        allCards.forEach(function (c) {
-            c.style.display = rowMatches(c, f) ? '' : 'none';
-        });
+        if (f.q) addChip('Búsqueda: ' + f.q, function () { document.getElementById('fBusqueda').value = ''; });
+        if (f.op) addChip('Op.: ' + f.op, function () { document.getElementById('fOperacion').value = ''; });
+        if (f.user) addChip('Usuario: ' + f.user, function () { document.getElementById('fUsuario').value = ''; });
+        if (f.desde) addChip('Desde: ' + f.desde, function () { document.getElementById('fFechaDesde').value = ''; });
+        if (f.hasta) addChip('Hasta: ' + f.hasta, function () { document.getElementById('fFechaHasta').value = ''; });
 
-        currentPage = 1;
-        renderPagination(visible);
-        updateActiveChips(f);
-        updateResultsCount(visible.length, allRows.length);
+        wrap.style.display = hasAny ? 'flex' : 'none';
     }
 
     function renderPagination(visible) {
@@ -91,16 +96,11 @@
             ? 'Mostrando ' + start + '–' + end + ' de ' + total + ' registros'
             : 'Sin resultados';
 
-        /* show/hide rows for this page */
         visible.forEach(function (row, i) {
             var onPage = i >= (currentPage - 1) * pageSize && i < currentPage * pageSize;
             row.style.display = onPage ? '' : 'none';
-            var id = row.getAttribute('data-id');
-            var det = document.getElementById('detail-' + id);
-            if (det) det.style.display = 'none'; /* collapse on page change */
         });
 
-        /* render page buttons */
         pg.innerHTML = '';
         function addBtn(label, page, disabled, isActive) {
             var btn = document.createElement('button');
@@ -116,10 +116,16 @@
             }
             pg.appendChild(btn);
         }
+
         addBtn('‹', currentPage - 1, currentPage === 1, false);
         for (var p = 1; p <= pages; p++) {
             if (pages > 7 && (p > 2 && p < currentPage - 1 || p > currentPage + 1 && p < pages - 1)) {
-                if (p === 3 || p === pages - 2) { var dots = document.createElement('span'); dots.className = 'page-ellipsis'; dots.textContent = '…'; pg.appendChild(dots); }
+                if (p === 3 || p === pages - 2) {
+                    var dots = document.createElement('span');
+                    dots.className = 'page-ellipsis';
+                    dots.textContent = '…';
+                    pg.appendChild(dots);
+                }
                 continue;
             }
             addBtn(p, p, false, p === currentPage);
@@ -127,31 +133,24 @@
         addBtn('›', currentPage + 1, currentPage === pages, false);
     }
 
-    function updateResultsCount(vis, total) {
-        var el = document.getElementById('resultsCount');
-        if (el) el.textContent = vis;
-        var info = document.getElementById('resultsInfo');
-        if (info) info.innerHTML = 'Mostrando <strong id="resultsCount">' + vis + '</strong> de ' + total + ' registros';
-    }
+    function applyFilters() {
+        var f = getFilters();
+        var visible = [];
 
-    function updateActiveChips(f) {
-        var wrap = document.getElementById('activeFilters');
-        wrap.innerHTML = '';
-        var hasAny = false;
-        function addChip(label, clearFn) {
-            hasAny = true;
-            var chip = document.createElement('div');
-            chip.className = 'filter-chip';
-            chip.innerHTML = label + '<button class="filter-chip-remove" aria-label="Quitar filtro">&#10005;</button>';
-            chip.querySelector('button').addEventListener('click', function () { clearFn(); applyFilters(); });
-            wrap.appendChild(chip);
-        }
-        if (f.q) addChip('Búsqueda: ' + f.q, function () { document.getElementById('fBusqueda').value = ''; });
-        if (f.op) addChip('Op.: ' + f.op, function () { document.getElementById('fOperacion').value = ''; });
-        if (f.user) addChip('Usuario: ' + f.user, function () { document.getElementById('fUsuario').value = ''; });
-        if (f.desde) addChip('Desde: ' + f.desde, function () { document.getElementById('fFechaDesde').value = ''; });
-        if (f.hasta) addChip('Hasta: ' + f.hasta, function () { document.getElementById('fFechaHasta').value = ''; });
-        wrap.style.display = hasAny ? 'flex' : 'none';
+        allRows.forEach(function (row) {
+            var matches = rowMatches(row, f);
+            row.style.display = matches ? '' : 'none';
+            if (matches) visible.push(row);
+        });
+
+        allCards.forEach(function (card) {
+            card.style.display = rowMatches(card, f) ? '' : 'none';
+        });
+
+        currentPage = 1;
+        renderPagination(visible);
+        updateActiveChips(f);
+        updateResultsCount(visible.length, allRows.length);
     }
 
     document.getElementById('btnApplyFilters').addEventListener('click', applyFilters);
@@ -172,20 +171,20 @@
         applyFilters();
     });
 
-    /* initial render */
     applyFilters();
 
-    /* ── sortable columns ── */
     var sortState = { col: null, asc: true };
     document.querySelectorAll('th.sortable').forEach(function (th) {
         th.addEventListener('click', function () {
             var col = th.getAttribute('data-col');
             sortState.asc = sortState.col === col ? !sortState.asc : true;
             sortState.col = col;
+
             document.querySelectorAll('th.sortable').forEach(function (h) {
                 h.classList.remove('sort-asc', 'sort-desc');
                 h.querySelector('.sort-icon').textContent = '⇕';
             });
+
             th.classList.add(sortState.asc ? 'sort-asc' : 'sort-desc');
             th.querySelector('.sort-icon').textContent = sortState.asc ? '↑' : '↓';
 
@@ -196,120 +195,11 @@
                 var vb = (b.getAttribute('data-' + col) || '').toLowerCase();
                 return sortState.asc ? va.localeCompare(vb) : vb.localeCompare(va);
             });
-            rows.forEach(function (r) {
-                var id = r.getAttribute('data-id');
-                var det = document.getElementById('detail-' + id);
-                tbody.appendChild(r);
-                if (det) tbody.appendChild(det);
-            });
+            rows.forEach(function (r) { tbody.appendChild(r); });
             applyFilters();
         });
     });
 
-    /* ── inline row detail toggle ── */
-    window.toggleDetail = function (btn, id) {
-        var detRow = document.getElementById('detail-' + id);
-        var dataRow = btn.closest('tr');
-        var isOpen = detRow && detRow.classList.contains('open');
-
-        /* close all open detail rows first */
-        document.querySelectorAll('.detail-row.open').forEach(function (r) { r.classList.remove('open'); });
-        document.querySelectorAll('.data-row.row-expanded').forEach(function (r) { r.classList.remove('row-expanded'); });
-        document.querySelectorAll('.btn-detail.expanded').forEach(function (b) { b.classList.remove('expanded'); b.setAttribute('aria-expanded', 'false'); b.innerHTML = '&#128270; Ver'; });
-
-        if (!isOpen && detRow) {
-            detRow.classList.add('open');
-            dataRow.classList.add('row-expanded');
-            btn.classList.add('expanded');
-            btn.setAttribute('aria-expanded', 'true');
-            btn.innerHTML = '&#9652; Cerrar';
-        }
-    };
-
-    /* ── detail modal ── */
-    var modal = document.getElementById('detailModal');
-    var btnClose = document.getElementById('btnModalClose');
-    var btnCloseFooter = document.getElementById('btnModalCloseFooter');
-
-    window.openModal = function (id) {
-        var m = movData[String(id)];
-        if (!m) return;
-
-        /* header */
-        var iconEl = document.getElementById('mHeaderIcon');
-        iconEl.textContent = getOpIcon(m.OperacionCss);
-        iconEl.className = 'modal-header-icon log-card-icon ' + m.OperacionCss;
-
-        document.getElementById('modalTitle').textContent = 'Detalle del movimiento #' + m.Id;
-        document.getElementById('mHeaderSub').textContent = m.OperacionLabel + ' — ' + m.EntidadTipo + ': ' + m.EntidadNombre;
-
-        /* meta */
-        document.getElementById('mMetaId').textContent = '#' + m.Id;
-        document.getElementById('mMetaUsuario').textContent = m.Usuario;
-        document.getElementById('mMetaFecha').textContent = m.FechaFormateada;
-        document.getElementById('mMetaOp').innerHTML = '<span class="op-pill ' + m.OperacionCss + '"><span class="op-dot"></span>' + m.OperacionLabel + '</span>';
-        document.getElementById('mMetaEntidad').textContent = m.EntidadTipo + ': ' + m.EntidadNombre;
-        document.getElementById('mMetaIp').textContent = m.IpAddress || '—';
-        document.getElementById('mDesc').textContent = m.Descripcion || '—';
-
-        /* diff table */
-        var area = document.getElementById('mDiffArea');
-        area.innerHTML = '';
-        try {
-            var prev = JSON.parse(m.ValoresAnterioresJson || '{}');
-            var next = JSON.parse(m.ValoresNuevosJson || '{}');
-            var keys = Array.from(new Set(Object.keys(prev).concat(Object.keys(next))));
-
-            if (keys.length === 0) {
-                area.innerHTML = '<p style="font-size:13px;color:var(--clr-gray-400);font-style:italic">Sin cambios de campo registrados.</p>';
-            } else {
-                var tbl = '<table class="diff-table" aria-label="Comparativa de campos"><thead><tr>'
-                    + '<th scope="col">Campo</th>'
-                    + '<th scope="col">Valor anterior</th>'
-                    + '<th scope="col">&#8194;</th>'
-                    + '<th scope="col">Valor nuevo</th>'
-                    + '<th scope="col">Cambió</th>'
-                    + '</tr></thead><tbody>';
-
-                keys.forEach(function (k) {
-                    var pv = prev[k] !== undefined ? String(prev[k]) : '';
-                    var nv = next[k] !== undefined ? String(next[k]) : '';
-                    var changed = pv !== nv;
-                    tbl += '<tr' + (changed ? ' class="row-changed"' : '') + '>'
-                        + '<td><span class="diff-field-name">' + escHtml(k) + '</span></td>'
-                        + '<td class="diff-cell"><span class="diff-val-cell ' + (pv ? 'prev' : 'empty') + '">' + (pv ? escHtml(pv) : 'vacío') + '</span></td>'
-                        + '<td class="diff-cell" style="color:var(--clr-gray-300)">&#8594;</td>'
-                        + '<td class="diff-cell"><span class="diff-val-cell ' + (nv ? 'next' : 'empty') + '">' + (nv ? escHtml(nv) : 'vacío') + '</span></td>'
-                        + '<td class="diff-cell">' + (changed ? '<span class="diff-changed-icon" title="Cambió">&#9888;</span>' : '<span class="diff-ok-icon" title="Sin cambio">&#8212;</span>') + '</td>'
-                        + '</tr>';
-                });
-                tbl += '</tbody></table>';
-                area.innerHTML = tbl;
-            }
-        } catch (_) {
-            area.innerHTML = '<p style="font-size:13px;color:var(--clr-red-500)">No se pudieron leer los datos del movimiento.</p>';
-        }
-
-        modal.classList.add('open');
-        document.getElementById('btnModalClose').focus();
-    };
-
-    function closeModal() { modal.classList.remove('open'); }
-    btnClose.addEventListener('click', closeModal);
-    btnCloseFooter.addEventListener('click', closeModal);
-    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
-
-    /* ── helpers ── */
-    function getOpIcon(css) {
-        return { creacion: '➕', edicion: '✏️', eliminacion: '🗑', entrada: '⬇', salida: '⬆', ajuste: '⚙' }[css] || '📋';
-    }
-    window.getOpIcon = getOpIcon;
-
-    function escHtml(str) {
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    /* ── CSV export ── */
     document.getElementById('btnExportCSV').addEventListener('click', function () {
         var headers = ['ID', 'Usuario', 'Fecha', 'Operacion', 'Entidad Tipo', 'Entidad Nombre', 'Descripcion', 'IP', 'Val. Anteriores', 'Val. Nuevos'];
         var rows = [headers];
@@ -326,13 +216,15 @@
         var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
-        a.href = url; a.download = 'bitacora_' + new Date().toISOString().slice(0, 10) + '.csv';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        a.href = url;
+        a.download = 'bitacora_' + new Date().toISOString().slice(0, 10) + '.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
         showToast('Bitácora exportada correctamente.', 'success');
     });
 
-    /* ── toast ── */
     function showToast(msg, type) {
         var t = document.getElementById('toast');
         var ti = document.getElementById('toastIcon');
@@ -343,6 +235,4 @@
         t.classList.add('show');
         setTimeout(function () { t.classList.remove('show'); }, 4000);
     }
-
 })();
-

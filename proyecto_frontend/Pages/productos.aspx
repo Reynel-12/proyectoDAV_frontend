@@ -286,9 +286,6 @@
 
                 </main>
 
-</div>
-        </div>
-
         <!-- ── Modal de confirmación de eliminación ── -->
         <div class="modal-backdrop" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal">
@@ -348,8 +345,8 @@
         </div>
 
         <!-- Hidden form para eliminar (postback) -->
-        <asp:HiddenField ID="hfDeleteId" runat="server" />
-        <asp:Button ID="btnDeleteConfirm" runat="server" Style="display: none" OnClick="btnDeleteConfirm_Click" CausesValidation="false" />
+        <asp:HiddenField ID="hfDeleteId" runat="server" ClientIDMode="Static" />
+        <asp:Button ID="btnDeleteConfirm" runat="server" ClientIDMode="Static" Style="display: none" OnClick="btnDeleteConfirm_Click" CausesValidation="false" />
 
         <!-- Toast -->
         <div class="toast" id="toast" role="status" aria-live="polite">

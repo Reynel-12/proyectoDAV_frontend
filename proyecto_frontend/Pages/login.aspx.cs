@@ -18,10 +18,10 @@ namespace proyecto_frontend
         {
             if (!Page.IsValid) return;
 
-            string email = txtEmail.Text.Trim();
-            string password = txtPassword.Text;
+            //string email = txtEmail.Text.Trim();
+            //string password = txtPassword.Text;
 
-            Response.Redirect("~/Pages/dashboard.aspx");
+            //Response.Redirect("~/Pages/dashboard.aspx");
 
             // TODO: validar contra tu base de datos / servicio de auth
             // Ejemplo:

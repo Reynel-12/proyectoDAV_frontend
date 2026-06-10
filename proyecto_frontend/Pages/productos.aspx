@@ -1,16 +1,15 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="productos.aspx.cs" Inherits="proyecto_frontend.productos" MasterPageFile="~/AppShell.Master" Title="Productos" %>
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="productos.aspx.cs" Inherits="proyecto_frontend.productos" MasterPageFile="~/AppShell.Master" Title="Productos" %>
 <asp:Content ID="PageHead" ContentPlaceHolderID="HeadContent" runat="server">
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/productos.css") %>" />
 </asp:Content>
 <asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
-<main class="main-content" id="main-content">
+<main class="main-content" id="main-content" data-api-base="https://localhost:44316/productos.asmx">
 
-                    <!-- Page header -->
                     <div class="page-header">
                         <div>
                             <h1 class="page-title">Productos</h1>
                             <p class="page-subtitle">
-                                <asp:Literal ID="litTotalCount" runat="server" Text="0" />
+                                <span id="totalCountLabel">0</span>
                                 productos registrados en el sistema
                             </p>
                         </div>
@@ -22,7 +21,6 @@
                         </a>
                     </div>
 
-                    <!-- Toolbar: búsqueda + filtros -->
                     <div class="toolbar">
                         <div class="search-wrap">
                             <span class="search-icon" aria-hidden="true">
@@ -35,14 +33,13 @@
                                 type="search"
                                 class="search-input"
                                 id="searchInput"
-                                placeholder="Buscar por código, nombre o descripción..."
+                                placeholder="Buscar por código, categoría o descripción..."
                                 aria-label="Buscar productos"
                                 autocomplete="off" />
                         </div>
 
                         <select class="filter-select" id="filterCategoria" aria-label="Filtrar por categoría">
                             <option value="">Todas las categorías</option>
-                            <asp:Literal ID="litCatOptions" runat="server" />
                         </select>
 
                         <select class="filter-select" id="filterStock" aria-label="Filtrar por estado de stock" style="min-width: 150px">
@@ -54,7 +51,6 @@
 
                         <div class="toolbar-right">
                             <span class="results-count" id="resultsCount" aria-live="polite"></span>
-                            <!-- toggle tabla / tarjetas (solo desktop) -->
                             <button type="button" class="btn-view-toggle active" id="btnTableView" title="Vista tabla" aria-label="Cambiar a vista tabla" aria-pressed="true">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.5" fill="none" />
@@ -74,10 +70,8 @@
                         </div>
                     </div>
 
-                    <!-- Table card -->
                     <div class="table-card">
 
-                        <!-- ── TABLE VIEW ── -->
                         <div class="table-wrap" id="tableView">
                             <table class="data-table" aria-label="Listado de productos">
                                 <thead>
@@ -98,14 +92,14 @@
                                             </span>
                                         </th>
                                         <th class="th-center" scope="col">ISV</th>
-                                        <th class="sortable" data-col="precioCompra" scope="col">P. Compra
+                                        <th class="sortable" data-col="preciocompra" scope="col">P. Compra
                                             <span class="sort-icon" aria-hidden="true">
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M12 4L12 20M12 4L18 10M12 4L6 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                                 </svg>
                                             </span>
                                         </th>
-                                        <th class="sortable" data-col="precioVenta" scope="col">P. Venta
+                                        <th class="sortable" data-col="precioventa" scope="col">P. Venta
                                             <span class="sort-icon" aria-hidden="true">
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M12 4L12 20M12 4L18 10M12 4L6 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -115,83 +109,10 @@
                                         <th class="th-center" scope="col">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableBody">
-                                    <asp:Repeater ID="rptProductos" runat="server" OnItemCommand="rptProductos_ItemCommand">
-                                        <ItemTemplate>
-                                            <tr
-                                                data-codigo='<%# Eval("Codigo") %>'
-                                                data-desc='<%# Eval("Descripcion") %>'
-                                                data-cat='<%# Eval("CategoriaId") %>'
-                                                data-stock='<%# Eval("StockEstado") %>'>
-
-                                                <!-- Foto + Código + Descripción -->
-                                                <td>
-                                                    <div class="prod-thumb-wrap">
-                                                        <%# string.IsNullOrEmpty(Eval("Foto").ToString())
-                                                    ? "<div class=\"prod-thumb-placeholder\" aria-hidden=\"true\"><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"18\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><path d=\"M9 11L6 16H18L15 13L12 15L9 11Z\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><circle cx=\"16.5\" cy=\"8.5\" r=\"1.5\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1\"/></svg></div>"
-                                                    : $"<img class=\"prod-thumb\" src=\"{Eval("Foto")}\" alt=\"Foto de {Eval("Codigo")}\" loading=\"lazy\" />" %>
-                                                        <div>
-                                                            <div class="prod-codigo"><%# Eval("Codigo") %></div>
-                                                            <div class="prod-desc" title="<%# Eval("Descripcion") %>"><%# Eval("Descripcion") %></div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                <!-- Categoría -->
-                                                <td><span class="cat-pill"><%# Eval("CategoriaNombre") %></span></td>
-
-                                                <!-- Existencia -->
-                                                <td class="td-center">
-                                                    <span class="stock-badge <%# Eval("StockEstado") %>">
-                                                        <span class="stock-dot"></span>
-                                                        <%# Eval("Existencia") %> uds
-                                                    </span>
-                                                </td>
-
-                                                <!-- ISV -->
-                                                <td class="td-center">
-                                                    <span class="tax-pill"><%# Eval("Impuesto") %>%</span>
-                                                </td>
-
-                                                <!-- Precio compra -->
-                                                <td>
-                                                    <div class="price-val">L <%# string.Format("{0:N2}", Eval("PrecioCompra")) %></div>
-                                                    <div class="price-label">Costo</div>
-                                                </td>
-
-                                                <!-- Precio venta -->
-                                                <td>
-                                                    <div class="price-val">L <%# string.Format("{0:N2}", Eval("PrecioVenta")) %></div>
-                                                    <div class="price-label">Venta</div>
-                                                </td>
-
-                                                <!-- Acciones -->
-                                                <td class="td-center">
-                                                    <div class="action-wrap">
-                                                        <a class="btn-action edit" href='editarProducto.aspx?id=<%# Eval("Id") %>' title="Editar producto <%# Eval("Codigo") %>" aria-label="Editar <%# Eval("Codigo") %>">
-                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                                            </svg>
-                                                        </a>
-                                                        <button class="btn-action del" type="button" title="Eliminar producto <%# Eval("Codigo") %>" aria-label="Eliminar <%# Eval("Codigo") %>" onclick="openDeleteModal('<%# Eval("Id") %>','<%# Eval("Codigo") %>','<%# Server.HtmlEncode(Eval("Descripcion").ToString()) %>','<%# Eval("Foto") %>')">
-                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                                                <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                                                <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                                                <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                                                <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </ItemTemplate>
-                                    </asp:Repeater>
-                                </tbody>
+                                <tbody id="tableBody"></tbody>
                             </table>
 
-                            <!-- Empty state (se muestra desde code-behind si lista vacía) -->
-                            <asp:Panel ID="pnlEmpty" runat="server" Visible="false" CssClass="empty-state">
+                            <div id="emptyState" class="empty-state" style="display: none;">
                                 <div class="empty-icon" aria-hidden="true">
                                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M4 6H20V18H4V6Z" stroke="currentColor" stroke-width="1.5" fill="none" />
@@ -207,86 +128,19 @@
                                     </svg>
                                     Agregar primer producto
                                 </a>
-                            </asp:Panel>
+                            </div>
                         </div>
 
-                        <!-- ── CARD VIEW ── -->
-                        <div class="card-grid" id="cardView">
-                            <asp:Repeater ID="rptProductosCard" runat="server">
-                                <ItemTemplate>
-                                    <div class="prod-card" data-codigo='<%# Eval("Codigo") %>' data-desc='<%# Eval("Descripcion") %>' data-cat='<%# Eval("CategoriaId") %>' data-stock='<%# Eval("StockEstado") %>'>
+                        <div class="card-grid" id="cardView"></div>
 
-                                        <%# string.IsNullOrEmpty(Eval("Foto").ToString())
-                                    ? "<div class=\"prod-card-img-placeholder\" aria-hidden=\"true\"><svg width=\"48\" height=\"48\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"18\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><path d=\"M9 11L6 16H18L15 13L12 15L9 11Z\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><circle cx=\"16.5\" cy=\"8.5\" r=\"1.5\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1\"/></svg></div>"
-                                    : $"<img class=\"prod-card-img\" src=\"{Eval("Foto")}\" alt=\"Fotografía de {Eval("Codigo")}\" loading=\"lazy\" />" %>
-
-                                        <div class="prod-card-body">
-                                            <div class="prod-card-row">
-                                                <span class="prod-card-code"><%# Eval("Codigo") %></span>
-                                                <span class="cat-pill"><%# Eval("CategoriaNombre") %></span>
-                                            </div>
-                                            <div class="prod-card-desc" title="<%# Eval("Descripcion") %>"><%# Eval("Descripcion") %></div>
-
-                                            <div class="prod-card-meta">
-                                                <div>
-                                                    <div class="meta-item-label">P. Compra</div>
-                                                    <div class="meta-item-val">L <%# string.Format("{0:N2}", Eval("PrecioCompra")) %></div>
-                                                </div>
-                                                <div>
-                                                    <div class="meta-item-label">P. Venta</div>
-                                                    <div class="meta-item-val">L <%# string.Format("{0:N2}", Eval("PrecioVenta")) %></div>
-                                                </div>
-                                                <div>
-                                                    <div class="meta-item-label">ISV</div>
-                                                    <div class="meta-item-val"><%# Eval("Impuesto") %>%</div>
-                                                </div>
-                                                <div>
-                                                    <div class="meta-item-label">Existencia</div>
-                                                    <div>
-                                                        <span class="stock-badge <%# Eval("StockEstado") %>">
-                                                            <span class="stock-dot"></span>
-                                                            <%# Eval("Existencia") %> uds
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="prod-card-footer">
-                                            <a class="btn-card-edit" href='editarProducto.aspx?id=<%# Eval("Id") %>' aria-label="Editar <%# Eval("Codigo") %>">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                                </svg>
-                                                Editar
-                                            </a>
-                                            <button class="btn-card-del" type="button" aria-label="Eliminar <%# Eval("Codigo") %>" onclick="openDeleteModal('<%# Eval("Id") %>','<%# Eval("Codigo") %>','<%# Server.HtmlEncode(Eval("Descripcion").ToString()) %>','<%# Eval("Foto") %>')">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                                    <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                                    <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                                    <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                                    <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />
-                                                </svg>
-                                                Eliminar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </ItemTemplate>
-                            </asp:Repeater>
-                        </div>
-
-                        <!-- Table footer / paginación -->
                         <div class="table-footer" id="tableFooterEl">
                             <span class="footer-info" id="footerInfo"></span>
-                            <div class="pagination" id="pagination" role="navigation" aria-label="Paginación de productos">
-                                <!-- generado por JS -->
-                            </div>
+                            <div class="pagination" id="pagination" role="navigation" aria-label="Paginación de productos"></div>
                         </div>
                     </div>
 
                 </main>
 
-        <!-- ── Modal de confirmación de eliminación ── -->
         <div class="modal-backdrop" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal">
                 <div class="modal-header">
@@ -344,11 +198,6 @@
             </div>
         </div>
 
-        <!-- Hidden form para eliminar (postback) -->
-        <asp:HiddenField ID="hfDeleteId" runat="server" ClientIDMode="Static" />
-        <asp:Button ID="btnDeleteConfirm" runat="server" ClientIDMode="Static" Style="display: none" OnClick="btnDeleteConfirm_Click" CausesValidation="false" />
-
-        <!-- Toast -->
         <div class="toast" id="toast" role="status" aria-live="polite">
             <span class="toast-icon" id="toastIcon"></span>
             <span id="toastMsg"></span>

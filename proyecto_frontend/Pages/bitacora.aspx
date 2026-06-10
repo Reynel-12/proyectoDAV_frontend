@@ -456,8 +456,6 @@
 
     </main>
 
-    </div>
-        </div>
 
     <!-- Hidden JSON data store for export CSV -->
     <asp:HiddenField ID="hfMovimientosJson" runat="server" ClientIDMode="Static" />

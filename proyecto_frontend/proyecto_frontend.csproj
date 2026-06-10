@@ -131,6 +131,7 @@
     <Content Include="JS\app-shell.js" />
     <Content Include="JS\bitacora.js" />
     <Content Include="JS\categorias.js" />
+    <Content Include="JS\login.js" />
     <Content Include="JS\nuevaCategoria.js" />
     <Content Include="JS\restablecerContrasena.js" />
     <Content Include="JS\nuevoUsuario.js" />

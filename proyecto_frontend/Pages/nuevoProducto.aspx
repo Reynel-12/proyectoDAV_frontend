@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/nuevoProducto.css") %>" />
 </asp:Content>
 <asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
-<main class="main-content" id="main-content">
+<main class="main-content" id="main-content" data-api-base="https://localhost:44316/productos.asmx" data-mode="create">
 
                     <!-- Page header -->
                     <div class="page-header">
@@ -38,7 +38,8 @@
                             </div>
                         </div>
 
-                        <!-- Validation summary (server-side) -->
+                        <div id="formMessage" class="validation-summary" style="display: none; margin: 20px 24px 0;"></div>
+
                         <asp:ValidationSummary
                             ID="vsSummary"
                             runat="server"
@@ -61,7 +62,7 @@
                                             <label class="field-label" for="<%= txtCodigo.ClientID %>">
                                                 Código <span class="field-required" aria-label="obligatorio">*</span>
                                             </label>
-                                            <div class="field-hint">Identificador único del producto (ej. PROD-001)</div>
+                                            <div class="field-hint">Ingresa el codigo numerico unico del producto</div>
                                             <div class="field-wrap">
                                                 <span class="field-icon" aria-hidden="true">
                                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,9 +73,11 @@
                                                 <asp:TextBox
                                                     ID="txtCodigo"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-input has-icon"
-                                                    placeholder="PROD-001"
-                                                    MaxLength="30"
+                                                    placeholder="1001"
+                                                    MaxLength="10"
+                                                    TextMode="Number"
                                                     autocomplete="off" />
                                                 <asp:RequiredFieldValidator
                                                     ID="rfvCodigo"
@@ -87,8 +90,8 @@
                                                     ID="revCodigo"
                                                     runat="server"
                                                     ControlToValidate="txtCodigo"
-                                                    ValidationExpression="^[A-Za-z0-9\-_]{1,30}$"
-                                                    ErrorMessage="El código solo puede contener letras, números, guiones y guiones bajos."
+                                                    ValidationExpression="^\d+$"
+                                                    ErrorMessage="El código debe ser un número entero positivo."
                                                     Display="None"
                                                     ValidationGroup="vgProducto" />
                                             </div>
@@ -110,6 +113,7 @@
                                                 <asp:DropDownList
                                                     ID="ddlCategoria"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-select">
                                                     <asp:ListItem Value="" Text="— Selecciona una categoría —" />
                                                 </asp:DropDownList>
@@ -146,6 +150,7 @@
                                                 <asp:TextBox
                                                     ID="txtDescripcion"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-textarea"
                                                     TextMode="MultiLine"
                                                     placeholder="Describe el producto: características, uso, especificaciones..."
@@ -184,6 +189,7 @@
                                                 <asp:TextBox
                                                     ID="txtPrecioCompra"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-input has-prefix has-suffix"
                                                     TextMode="Number"
                                                     placeholder="0.00"
@@ -218,6 +224,7 @@
                                                 <asp:TextBox
                                                     ID="txtPrecioVenta"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-input has-prefix has-suffix"
                                                     TextMode="Number"
                                                     placeholder="0.00"
@@ -257,6 +264,7 @@
                                                 <asp:DropDownList
                                                     ID="ddlImpuesto"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-select">
                                                     <asp:ListItem Value="" Text="— Selecciona ISV —" />
                                                     <asp:ListItem Value="0" Text="0% — Exento" />
@@ -296,6 +304,7 @@
                                                 <asp:TextBox
                                                     ID="txtExistencia"
                                                     runat="server"
+                                                    ClientIDMode="Static"
                                                     CssClass="field-input has-icon has-suffix"
                                                     TextMode="Number"
                                                     placeholder="0"
@@ -337,6 +346,7 @@
                                         <asp:FileUpload
                                             ID="fuFoto"
                                             runat="server"
+                                            ClientIDMode="Static"
                                             CssClass="photo-upload-input"
                                             accept=".jpg,.jpeg,.png"
                                             aria-label="Seleccionar fotografía del producto" />
@@ -405,7 +415,7 @@
 
                         <!-- Form actions -->
                         <div class="form-actions">
-                            <a class="btn-cancel" href="dashboard.aspx">
+                            <a class="btn-cancel" href="productos.aspx">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                                 </svg>
@@ -414,6 +424,7 @@
                             <asp:Button
                                 ID="btnGuardar"
                                 runat="server"
+                                ClientIDMode="Static"
                                 Text="Guardar producto"
                                 CssClass="btn-save"
                                 ValidationGroup="vgProducto"

@@ -6,10 +6,10 @@
         }
 
         var apiBase = main.getAttribute('data-api-base') || '';
+        var categoriasApiBase = main.getAttribute('data-categorias-api-base') || apiBase.replace(/productos\.asmx$/i, 'categorias.asmx');
         var mode = main.getAttribute('data-mode') || 'create';
         var productId = parseInt(main.getAttribute('data-product-id') || '0', 10);
-
-        var form = document.getElementById('appForm');
+        var form = document.getElementById('appForm') || document.querySelector('form');
         var txtCodigo = document.getElementById('txtCodigo');
         var ddlCategoria = document.getElementById('ddlCategoria');
         var txtDescripcion = document.getElementById('txtDescripcion');
@@ -219,13 +219,13 @@
 
         function collectPayload() {
             return {
-                codigo: parseInt((txtCodigo.value || "").trim(), 10),
+                codigo: parseInt((txtCodigo.value || '').trim(), 10),
                 descripcion: (txtDescripcion.value || '').trim(),
                 precioCompra: Number(txtPrecioCompra.value || 0),
                 precioVenta: Number(txtPrecioVenta.value || 0),
                 impuesto: Number(ddlImpuesto.value || 0),
-                existencia: parseInt((txtExistencia.value || "0").trim(), 10),
-                categoria: ddlCategoria.value || '',
+                existencia: parseInt((txtExistencia.value || '0').trim(), 10),
+                categoriaId: parseInt((ddlCategoria.value || '0').trim(), 10),
                 fotografiaBase64: fotoBase64 || '',
                 fotografiaNombre: fotoNombre || '',
                 fotografiaActual: fotoActual || '',
@@ -247,7 +247,7 @@
                 return 'La descripción es obligatoria.';
             }
 
-            if (!payload.categoria) {
+            if (!Number.isInteger(payload.categoriaId) || payload.categoriaId <= 0) {
                 return 'La categoría es obligatoria.';
             }
 
@@ -279,7 +279,7 @@
         }
 
         async function postJson(url, payload) {
-            const response = await fetch(url, {
+            var response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8'
@@ -287,38 +287,25 @@
                 body: JSON.stringify(payload || {})
             });
 
-            const text = await response.text();
-
-            console.log('URL:', url);
-            console.log('Payload enviado:', payload);
-            console.log('Status:', response.status);
-            console.log('Respuesta cruda:', text);
-
             if (!response.ok) {
-                throw new Error(
-                    'Error HTTP ' + response.status + '. Revisa la consola para ver la respuesta del servidor.'
-                );
+                throw new Error('Error HTTP ' + response.status + '.');
             }
 
-            try {
-                const result = JSON.parse(text);
-                return result.d || result;
-            } catch (error) {
-                throw new Error('El servidor no devolvió JSON válido. Respuesta: ' + text.substring(0, 300));
-            }
+            var result = await response.json();
+            return result.d || result;
         }
 
         async function cargarCategoriasDesdeApi() {
             try {
-                var result = await postJson(apiBase + '/ListarProductos', {});
+                var result = await postJson(categoriasApiBase + '/ListarCategoriasActivas', {});
                 var categorias = result.Categorias || [];
                 var actual = ddlCategoria.value;
                 ddlCategoria.innerHTML = '<option value="">— Selecciona una categoria —</option>';
 
                 categorias.forEach(function (categoria) {
                     var option = document.createElement('option');
-                    option.value = categoria;
-                    option.textContent = categoria;
+                    option.value = categoria.Id;
+                    option.textContent = categoria.Nombre;
                     ddlCategoria.appendChild(option);
                 });
 
@@ -349,18 +336,20 @@
                 if (txtExistencia) txtExistencia.value = producto.Existencia;
 
                 if (ddlCategoria) {
+                    var categoriaActual = String(producto.CategoriaId || '');
+                    var nombreCategoria = producto.CategoriaNombre || producto.Categoria || '';
                     var found = Array.prototype.some.call(ddlCategoria.options, function (option) {
-                        return option.value === producto.Categoria;
+                        return option.value === categoriaActual;
                     });
 
-                    if (!found) {
+                    if (!found && categoriaActual) {
                         var extraOption = document.createElement('option');
-                        extraOption.value = producto.Categoria;
-                        extraOption.textContent = producto.Categoria;
+                        extraOption.value = categoriaActual;
+                        extraOption.textContent = nombreCategoria;
                         ddlCategoria.appendChild(extraOption);
                     }
 
-                    ddlCategoria.value = producto.Categoria;
+                    ddlCategoria.value = categoriaActual;
                 }
 
                 fotoActual = producto.Fotografia || '';
@@ -476,7 +465,6 @@
         }
 
         form.addEventListener('submit', guardarProducto);
-
         cargarCategoriasDesdeApi().then(cargarProducto);
     }
 

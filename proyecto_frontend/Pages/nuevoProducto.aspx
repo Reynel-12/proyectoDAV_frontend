@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/nuevoProducto.css") %>" />
 </asp:Content>
 <asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
-<main class="main-content" id="main-content" data-api-base="https://localhost:44316/productos.asmx" data-mode="create">
+<main class="main-content" id="main-content" data-api-base="https://localhost:44316/productos.asmx" data-categorias-api-base="https://localhost:44316/categorias.asmx" data-mode="create">
 
                     <!-- Page header -->
                     <div class="page-header">

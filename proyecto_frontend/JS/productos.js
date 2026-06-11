@@ -61,6 +61,10 @@
             });
         }
 
+        function getCategoryName(producto) {
+            return producto.CategoriaNombre || producto.Categoria || '';
+        }
+
         function resolvePhotoUrl(path) {
             if (!path) {
                 return '';
@@ -181,7 +185,7 @@
                 var tableRow = document.createElement('tr');
                 tableRow.setAttribute('data-codigo', producto.Codigo);
                 tableRow.setAttribute('data-desc', producto.Descripcion || '');
-                tableRow.setAttribute('data-cat', producto.Categoria || '');
+                tableRow.setAttribute('data-cat', getCategoryName(producto));
                 tableRow.setAttribute('data-stock', producto.StockEstado || '');
                 tableRow.setAttribute('data-existencia', producto.Existencia);
                 tableRow.setAttribute('data-preciocompra', producto.PrecioCompra);
@@ -198,7 +202,7 @@
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td><span class="cat-pill">' + escapeHtml(producto.Categoria) + '</span></td>' +
+                    '<td><span class="cat-pill">' + escapeHtml(getCategoryName(producto)) + '</span></td>' +
                     '<td class="td-center"><span class="stock-badge ' + escapeHtml(producto.StockEstado) + '"><span class="stock-dot"></span>' + escapeHtml(producto.Existencia) + ' uds</span></td>' +
                     '<td class="td-center"><span class="tax-pill">' + escapeHtml(producto.Impuesto) + '%</span></td>' +
                     '<td><div class="price-val">' + formatMoney(producto.PrecioCompra) + '</div><div class="price-label">Costo</div></td>' +
@@ -218,14 +222,14 @@
                 card.className = 'prod-card';
                 card.setAttribute('data-codigo', producto.Codigo);
                 card.setAttribute('data-desc', producto.Descripcion || '');
-                card.setAttribute('data-cat', producto.Categoria || '');
+                card.setAttribute('data-cat', getCategoryName(producto));
                 card.setAttribute('data-stock', producto.StockEstado || '');
                 card.innerHTML =
                     (fotoUrl
                         ? '<img class="prod-card-img" src="' + escapeHtml(fotoUrl) + '" alt="Fotografía de ' + escapeHtml(producto.Codigo) + '" loading="lazy" />'
                         : '<div class="prod-card-img-placeholder" aria-hidden="true"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="20" height="18" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 11L6 16H18L15 13L12 15L9 11Z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16.5" cy="8.5" r="1.5" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg></div>') +
                     '<div class="prod-card-body">' +
-                        '<div class="prod-card-row"><span class="prod-card-code">' + escapeHtml(producto.Codigo) + '</span><span class="cat-pill">' + escapeHtml(producto.Categoria) + '</span></div>' +
+                        '<div class="prod-card-row"><span class="prod-card-code">' + escapeHtml(producto.Codigo) + '</span><span class="cat-pill">' + escapeHtml(getCategoryName(producto)) + '</span></div>' +
                         '<div class="prod-card-desc" title="' + escapeHtml(producto.Descripcion) + '">' + escapeHtml(producto.Descripcion) + '</div>' +
                         '<div class="prod-card-meta">' +
                             '<div><div class="meta-item-label">P. Compra</div><div class="meta-item-val">' + formatMoney(producto.PrecioCompra) + '</div></div>' +
@@ -263,9 +267,9 @@
                 var matchQ = !q ||
                     String(producto.Codigo).toLowerCase().indexOf(q) >= 0 ||
                     String(producto.Descripcion || '').toLowerCase().indexOf(q) >= 0 ||
-                    String(producto.Categoria || '').toLowerCase().indexOf(q) >= 0;
+                    String(getCategoryName(producto)).toLowerCase().indexOf(q) >= 0;
 
-                var matchCategoria = !categoria || producto.Categoria === categoria;
+                var matchCategoria = !categoria || getCategoryName(producto) === categoria;
                 var matchStock = !stock || producto.StockEstado === stock;
                 return matchQ && matchCategoria && matchStock;
             });

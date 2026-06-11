@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Web.UI.WebControls;
 
@@ -13,25 +12,8 @@ namespace proyecto_frontend
         {
             if (!IsPostBack)
             {
-                CargarCategorias();
-            }
-        }
-
-        private void CargarCategorias()
-        {
-            ddlCategoria.Items.Clear();
-            ddlCategoria.Items.Add(new ListItem("— Selecciona una categoría —", ""));
-
-            foreach (string categoria in new[]
-            {
-                "Electrónica",
-                "Papelería",
-                "Lubricantes",
-                "Repuestos",
-                "Consumibles"
-            })
-            {
-                ddlCategoria.Items.Add(new ListItem(categoria, categoria));
+                ddlCategoria.Items.Clear();
+                ddlCategoria.Items.Add(new ListItem("— Selecciona una categoría —", ""));
             }
         }
 

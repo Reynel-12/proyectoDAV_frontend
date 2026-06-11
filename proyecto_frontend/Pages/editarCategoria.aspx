@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/nuevaCategoria.css") %>" />
 </asp:Content>
 <asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
-<main class="main-content" id="main-content">
+<main class="main-content" id="main-content" data-api-base="https://localhost:44316/categorias.asmx" data-mode="edit" data-category-id="<%= Request.QueryString["id"] ?? string.Empty %>">
 
                     <div class="page-header">
                         <div class="page-header-left">
@@ -15,7 +15,7 @@
                             </a>
                             <div>
                                 <h1 class="page-title">
-                                    <asp:Literal ID="litPageTitle" runat="server" Text="Editar categoría" />
+                                    <span id="litPageTitle">Editar categoría</span>
                                 </h1>
                                 <p class="page-subtitle">Completa la información de la categoría</p>
                             </div>
@@ -63,7 +63,7 @@
                                                     <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none" />
                                                 </svg>
                                             </span>
-                                            <asp:TextBox ID="txtNombre" runat="server" CssClass="field-input"
+                                            <asp:TextBox ID="txtNombre" runat="server" ClientIDMode="Static" CssClass="field-input"
                                                 placeholder="Ej. Electrónica, Papelería, Repuestos..." MaxLength="80" autocomplete="off" />
                                             <asp:RequiredFieldValidator ID="rfvNombre" runat="server"
                                                 ControlToValidate="txtNombre"
@@ -90,11 +90,20 @@
                                                     <path d="M8 16H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                                                 </svg>
                                             </span>
-                                            <asp:TextBox ID="txtDescripcion" runat="server" CssClass="field-textarea"
+                                            <asp:TextBox ID="txtDescripcion" runat="server" ClientIDMode="Static" CssClass="field-textarea"
                                                 TextMode="MultiLine" placeholder="Describe brevemente el tipo de productos de esta categoría..."
                                                 MaxLength="200" Rows="3" />
                                         </div>
                                         <div class="char-counter" id="charCounter">0 / 200</div>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="field-label" for="chkEstado">Estado</label>
+                                        <div class="field-hint">Las categorías inactivas no estarán disponibles al crear productos.</div>
+                                        <label style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--clr-gray-700);margin-top:10px;">
+                                            <input type="checkbox" id="chkEstado" checked="checked" />
+                                            Categoría activa
+                                        </label>
                                     </div>
                                 </div>
 
@@ -109,8 +118,8 @@
                                         </svg>
                                         Cancelar
                                     </a>
-                                    <asp:Button ID="btnGuardar" runat="server" Text="Guardar categoría"
-                                        CssClass="btn-save" ValidationGroup="vgCategoria" OnClick="btnGuardar_Click" />
+                                    <asp:Button ID="btnGuardar" runat="server" ClientIDMode="Static" Text="Guardar categoría"
+                                        CssClass="btn-save" ValidationGroup="vgCategoria" UseSubmitBehavior="false" />
                                 </div>
                             </div>
                         </div>

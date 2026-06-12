@@ -129,6 +129,7 @@
     <Content Include="CSS\restablecerContrasena.css" />
     <Content Include="CSS\usuarios.css" />
     <Content Include="JS\app-shell.js" />
+    <Content Include="JS\auth.js" />
     <Content Include="JS\bitacora.js" />
     <Content Include="JS\categorias.js" />
     <Content Include="JS\login.js" />

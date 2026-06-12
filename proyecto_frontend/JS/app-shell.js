@@ -1,24 +1,110 @@
 (function () {
+
+    function validarSesion() {
+
+        const usuario =
+            sessionStorage.getItem("usuario") ||
+            localStorage.getItem("usuario");
+
+        if (!usuario) {
+
+            const paginaActual =
+                window.location.pathname.toLowerCase();
+
+            if (!paginaActual.includes("login.aspx")) {
+                window.location.href = "login.aspx";
+            }
+
+            return false;
+        }
+
+        return JSON.parse(usuario);
+    }
+
+    function cargarDatosUsuario() {
+
+        const usuario = validarSesion();
+
+        if (!usuario) {
+            return;
+        }
+
+        console.log("Usuario autenticado:", usuario);
+
+        const avatar = document.querySelector(".tb-avatar");
+
+        if (avatar) {
+
+            let iniciales = "";
+
+            if (usuario.Nombre) {
+                iniciales += usuario.Nombre.charAt(0);
+            }
+
+            if (usuario.Apellido) {
+                iniciales += usuario.Apellido.charAt(0);
+            }
+
+            avatar.textContent = iniciales.toUpperCase();
+            avatar.title = usuario.Nombre + " " + usuario.Apellido;
+            avatar.setAttribute(
+                "aria-label",
+                "Usuario: " + usuario.Nombre + " " + usuario.Apellido
+            );
+        }
+    }
+
+    function cerrarSesion() {
+
+        sessionStorage.removeItem("usuario");
+        localStorage.removeItem("usuario");
+
+        window.location.href = "login.aspx";
+    }
+
     function initAppShell() {
-        var menuBtn = document.getElementById('menuBtn');
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
+
+        const menuBtn = document.getElementById("menuBtn");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
 
         if (!menuBtn || !sidebar || !overlay) {
             return;
         }
 
         function isCompactLayout() {
-            return window.getComputedStyle(menuBtn).display !== 'none';
+            return window.getComputedStyle(menuBtn).display !== "none";
         }
 
         function setOpenState(isOpen) {
-            var shouldOpen = isOpen && isCompactLayout();
-            sidebar.classList.toggle('open', shouldOpen);
-            overlay.classList.toggle('active', shouldOpen);
-            overlay.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
-            menuBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-            document.body.classList.toggle('app-shell-open', shouldOpen);
+
+            const shouldOpen =
+                isOpen && isCompactLayout();
+
+            sidebar.classList.toggle(
+                "open",
+                shouldOpen
+            );
+
+            overlay.classList.toggle(
+                "active",
+                shouldOpen
+            );
+
+            overlay.setAttribute(
+                "aria-hidden",
+                shouldOpen ? "false" : "true"
+            );
+
+            menuBtn.setAttribute(
+                "aria-expanded",
+                shouldOpen ? "true" : "false"
+            );
+
+            document.body.classList.toggle(
+                "app-shell-open",
+                shouldOpen
+            );
         }
 
         function openSidebar() {
@@ -29,42 +115,79 @@
             setOpenState(false);
         }
 
-        menuBtn.addEventListener('click', function () {
+        menuBtn.addEventListener("click", function () {
+
             if (!isCompactLayout()) {
                 return;
             }
-            setOpenState(!sidebar.classList.contains('open'));
+
+            setOpenState(
+                !sidebar.classList.contains("open")
+            );
         });
 
-        overlay.addEventListener('click', closeSidebar);
+        overlay.addEventListener(
+            "click",
+            closeSidebar
+        );
 
-        sidebar.addEventListener('click', function (event) {
-            if (isCompactLayout() && event.target.closest('a')) {
-                closeSidebar();
+        sidebar.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    isCompactLayout() &&
+                    event.target.closest("a")
+                ) {
+                    closeSidebar();
+                }
             }
-        });
+        );
 
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                closeSidebar();
-            }
-        });
+        document.addEventListener(
+            "keydown",
+            function (event) {
 
-        window.addEventListener('resize', function () {
-            if (!isCompactLayout()) {
-                closeSidebar();
+                if (event.key === "Escape") {
+                    closeSidebar();
+                }
             }
-        });
+        );
+
+        window.addEventListener(
+            "resize",
+            function () {
+
+                if (!isCompactLayout()) {
+                    closeSidebar();
+                }
+            }
+        );
 
         window.appShell = {
-            openSidebar: openSidebar,
-            closeSidebar: closeSidebar
+            openSidebar,
+            closeSidebar
         };
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAppShell);
+    window.cerrarSesion = cerrarSesion;
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+                validarSesion();
+                cargarDatosUsuario();
+                initAppShell();
+            }
+        );
+
     } else {
+
+        validarSesion();
+        cargarDatosUsuario();
         initAppShell();
     }
+
 })();

@@ -1,5 +1,14 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
 
+    const usuario =
+        sessionStorage.getItem("usuario") ||
+        localStorage.getItem("usuario");
+
+    if (usuario) {
+        window.location.href = "dashboard.aspx";
+        return;
+    }
+
     const form = document.getElementById("form1");
     const emailInput = document.getElementById("txtEmail");
     const passwordInput = document.getElementById("txtPassword");

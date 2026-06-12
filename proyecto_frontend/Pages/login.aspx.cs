@@ -18,24 +18,7 @@ namespace proyecto_frontend
         {
             if (!Page.IsValid) return;
 
-            //string email = txtEmail.Text.Trim();
-            //string password = txtPassword.Text;
-
-            //Response.Redirect("~/Pages/dashboard.aspx");
-
-            // TODO: validar contra tu base de datos / servicio de auth
-            // Ejemplo:
-            // bool ok = AuthService.ValidateUser(email, password);
-            // if (ok)
-            // {
-            //     if (chkRemember.Checked) { /* setear cookie persistente */ }
-            //     Session["UserEmail"] = email;
-            //     Response.Redirect("~/Dashboard.aspx");
-            // }
-            // else
-            // {
-            //     vsSummary.Visible = true;  // mostrar error genérico
-            // }
+           
         }
     }
 }

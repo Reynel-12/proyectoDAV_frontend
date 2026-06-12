@@ -471,5 +471,14 @@
     </div>
 </asp:Content>
 <asp:Content ID="PageScripts" ContentPlaceHolderID="PageScripts" runat="server">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const usuario = obtenerUsuarioAutenticado();
+
+            if (!usuario) return;
+
+            console.log(usuario);
+        });
+</script>
     <script src="<%= ResolveUrl("~/JS/bitacora.js") %>"></script>
 </asp:Content>

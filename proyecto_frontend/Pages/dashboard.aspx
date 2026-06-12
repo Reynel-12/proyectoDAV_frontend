@@ -226,4 +226,14 @@
         </div>
 
     </main>
+    <script src="JS/auth.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const usuario = obtenerUsuarioAutenticado();
+
+    if (!usuario) return;
+
+    console.log(usuario);
+});
+</script>
 </asp:Content>

@@ -337,14 +337,12 @@ body {
     white-space: nowrap;
 }
 
-.role-pill.admin { background: var(--clr-purple-bg); color: var(--clr-purple-500); }
+.role-pill.administrador { background: var(--clr-purple-bg); color: var(--clr-purple-500); }
 .role-pill.supervisor { background: #eef6ff; color: #315a9e; }
 .role-pill.operador { background: #eefbf6; color: #0c8c5d; }
-.role-pill.cliente { background: var(--clr-gray-100); color: var(--clr-gray-700); }
+.role-pill.usuario { background: var(--clr-gray-100); color: var(--clr-gray-700); }
 
 .status-pill.activo { background: var(--clr-green-bg); color: var(--clr-green-700); }
-.status-pill.pendiente { background: var(--clr-amber-bg); color: var(--clr-amber-700); }
-.status-pill.bloqueado { background: var(--clr-red-bg); color: var(--clr-red-700); }
 .status-pill.inactivo { background: var(--clr-gray-100); color: var(--clr-gray-700); }
 
 .status-dot {

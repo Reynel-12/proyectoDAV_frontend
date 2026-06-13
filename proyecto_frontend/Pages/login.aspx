@@ -76,7 +76,7 @@
                                     class="field-input"
                                     type="email"
                                     placeholder="usuario@empresa.com"
-                                    maxlength="150"
+                                    maxlength="50"
                                     autocomplete="email" />
                             </div>
                         </div>

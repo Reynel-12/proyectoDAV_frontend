@@ -101,6 +101,12 @@ body {
     line-height: 1.6;
 }
 
+.validation-summary.success {
+    background: #eefbf6;
+    border-color: #bce8d0;
+    color: #127248;
+}
+
 .form-layout {
     max-width: 920px;
 }

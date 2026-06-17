@@ -4,7 +4,8 @@
     <link rel="stylesheet" href="<%= ResolveUrl("~/CSS/dashboard.css") %>" />
 </asp:Content>
 <asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
-    <main class="main-content" id="main-content">
+    <main class="main-content" id="main-content"
+          data-api-base="https://localhost:44316/bitacora.asmx">
 
         <div class="page-header">
             <h1 class="page-title">Dashboard</h1>
@@ -204,36 +205,15 @@
                             <th scope="col">Usuario</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <asp:Repeater ID="rptBitacora" runat="server">
-                            <ItemTemplate>
-                                <tr>
-                                    <td><%# Eval("Fecha", "{0:dd/MM/yyyy HH:mm}") %></td>
-                                    <td><%# Eval("Producto") %></td>
-                                    <td>
-                                        <span class="log-pill <%# Eval("TipoMovimiento").ToString().ToLower() %>">
-                                            <%# Eval("TipoMovimiento") %>
-                                        </span>
-                                    </td>
-                                    <td><%# Eval("Cantidad") %></td>
-                                    <td><%# Eval("Usuario") %></td>
-                                </tr>
-                            </ItemTemplate>
-                        </asp:Repeater>
-                    </tbody>
+                    <%-- ✅ tbody vacío — dashboard.js lo llenará --%>
+                    <tbody id="dashBitacoraBody"></tbody>
                 </table>
             </div>
         </div>
 
     </main>
-    <script src="JS/auth.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const usuario = obtenerUsuarioAutenticado();
-
-    if (!usuario) return;
-
-    console.log(usuario);
-});
-</script>
+</asp:Content>
+<%-- ✅ dashboard.js cargado aquí --%>
+<asp:Content ID="PageScripts" ContentPlaceHolderID="PageScripts" runat="server">
+    <script src="<%= ResolveUrl("~/JS/dashboard.js") %>"></script>
 </asp:Content>

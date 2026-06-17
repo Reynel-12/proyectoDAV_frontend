@@ -60,9 +60,6 @@ namespace proyecto_frontend
             dt.Rows.Add(DateTime.Now.AddMinutes(-190), "Papel bond A4 resma", "Ajuste", "±5", "Carlos A.");
             dt.Rows.Add(DateTime.Now.AddDays(-1).AddHours(-7), "Aceite motor 5W-30", "Salida", "-3", "Juan M.");
             dt.Rows.Add(DateTime.Now.AddDays(-1).AddHours(-14), "Filtro de aire tipo A", "Entrada", "+10", "María R.");
-
-            rptBitacora.DataSource = dt;
-            rptBitacora.DataBind();
         }
     }
 }

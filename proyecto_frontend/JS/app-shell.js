@@ -22,35 +22,25 @@
     }
 
     function cargarDatosUsuario() {
-
         const usuario = validarSesion();
-
-        if (!usuario) {
-            return;
-        }
-
-        console.log("Usuario autenticado:", usuario);
+        if (!usuario) return;
 
         const avatar = document.querySelector(".tb-avatar");
-
         if (avatar) {
-
             let iniciales = "";
-
-            if (usuario.Nombre) {
-                iniciales += usuario.Nombre.charAt(0);
-            }
-
-            if (usuario.Apellido) {
-                iniciales += usuario.Apellido.charAt(0);
-            }
+            if (usuario.Nombre) iniciales += usuario.Nombre.charAt(0);
+            if (usuario.Apellido) iniciales += usuario.Apellido.charAt(0);
 
             avatar.textContent = iniciales.toUpperCase();
             avatar.title = usuario.Nombre + " " + usuario.Apellido;
-            avatar.setAttribute(
-                "aria-label",
-                "Usuario: " + usuario.Nombre + " " + usuario.Apellido
-            );
+            avatar.setAttribute("aria-label", "Usuario: " + usuario.Nombre + " " + usuario.Apellido);
+
+            // ✅ Color directo en JS, sin depender de CSS
+            const colores = ["#3b82f6", "#22c55e", "#a855f7", "#f59e0b", "#ef4444", "#06b6d4"];
+            const correo = usuario.Usuario || usuario.Correo || "";
+            let hash = 0;
+            for (let i = 0; i < correo.length; i++) hash += correo.charCodeAt(i);
+            avatar.style.background = colores[hash % colores.length];
         }
     }
 

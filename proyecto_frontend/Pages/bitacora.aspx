@@ -215,6 +215,7 @@
                     <p class="results-info" id="resultsInfo" role="status" aria-live="polite">
                         Mostrando <strong id="resultsCount">0</strong> registros
                     </p>
+                    <span class="results-hint">Selecciona una fila para ver el detalle completo</span>
                 </div>
                 <div class="table-toolbar-right">
                     <label for="pageSize" style="font-size:12px;color:var(--clr-gray-500)">Filas por página:</label>
@@ -278,6 +279,23 @@
 
         <%-- ✅ cardList vacío — JS lo llenará --%>
         <div class="log-card-list" id="cardList" aria-label="Lista de movimientos (vista móvil)"></div>
+
+        <div class="modal-backdrop" id="bitacoraDetailModal" aria-hidden="true">
+            <div class="modal modal-detail-log" role="dialog" aria-modal="true" aria-labelledby="bitacoraModalTitle">
+                <div class="modal-header">
+                    <div class="modal-header-icon" id="bitacoraModalIcon" aria-hidden="true"></div>
+                    <div class="modal-header-copy">
+                        <h2 class="modal-header-title" id="bitacoraModalTitle">Detalle del movimiento</h2>
+                        <p class="modal-header-sub" id="bitacoraModalSubtitle">Consulta completa de los cambios registrados.</p>
+                    </div>
+                    <button class="modal-close" id="bitacoraModalClose" type="button" aria-label="Cerrar detalle">&times;</button>
+                </div>
+                <div class="modal-body" id="bitacoraModalBody"></div>
+                <div class="modal-footer">
+                    <button class="btn-modal-close" id="bitacoraModalFooterClose" type="button">Cerrar</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Toast -->
         <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true">

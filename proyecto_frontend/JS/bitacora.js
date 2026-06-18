@@ -141,6 +141,10 @@
             return m.EntidadNombre || m.EntidadTipo || 'Registro';
         }
 
+        function getIpDisplay(ipValue) {
+            return String(ipValue || '').trim() || 'Sin IP registrada';
+        }
+
         function getSearchableText(m) {
             return [m.Usuario, m.EntidadNombre, m.Descripcion].join(' ').toLowerCase();
         }
@@ -183,7 +187,7 @@
                         '<span class="entity-name" title="' + esc(m.EntidadNombre) + '">' + esc(m.EntidadNombre) + '</span>' +
                     '</div>' +
                 '</td>' +
-                '<td><span class="table-ip" title="' + esc(m.IpAddress || 'N/A') + '">' + esc(m.IpAddress || 'N/A') + '</span></td>' +
+                '<td><span class="table-ip" title="' + esc(getIpDisplay(m.IpAddress)) + '">' + esc(getIpDisplay(m.IpAddress)) + '</span></td>' +
                 '<td>' +
                     '<div class="vals-preview">' +
                         (m.ValorAnteriorResumen
@@ -226,7 +230,7 @@
                 '<dl class="log-card-meta">' +
                     '<div class="log-card-field"><dt class="log-card-field-label">Usuario</dt><dd class="log-card-field-val">' + esc(m.Usuario) + '</dd></div>' +
                     '<div class="log-card-field"><dt class="log-card-field-label">Fecha</dt><dd class="log-card-field-val"><time datetime="' + esc(m.FechaISO) + '">' + esc(m.FechaFormateada) + '</time></dd></div>' +
-                    '<div class="log-card-field"><dt class="log-card-field-label">Direccion IP</dt><dd class="log-card-field-val log-card-field-ip">' + esc(m.IpAddress || 'N/A') + '</dd></div>' +
+                    '<div class="log-card-field"><dt class="log-card-field-label">Direccion IP</dt><dd class="log-card-field-val log-card-field-ip">' + esc(getIpDisplay(m.IpAddress)) + '</dd></div>' +
                 '</dl>' +
                 '<div class="log-card-vals">' +
                     '<div class="vals-label">Cambios registrados</div>' +
@@ -606,7 +610,7 @@
                         '</div>' +
                         '<div class="modal-side-card">' +
                             '<span class="modal-side-label">Direccion IP</span>' +
-                            '<span class="modal-side-value ip">' + esc(record.IpAddress || 'N/A') + '</span>' +
+                            '<span class="modal-side-value ip">' + esc(getIpDisplay(record.IpAddress)) + '</span>' +
                         '</div>' +
                     '</div>' +
                 '</section>' +

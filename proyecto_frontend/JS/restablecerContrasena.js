@@ -1,73 +1,92 @@
-(function () {
-    var toggleBtn = document.getElementById('togglePw1');
-    var passwordInput = document.getElementById('txtNuevaContrasena');
+document.addEventListener("DOMContentLoaded", () => {
 
-    if (toggleBtn && passwordInput) {
-        toggleBtn.addEventListener('click', function () {
-            var isPassword = passwordInput.type === 'password';
-            passwordInput.type = isPassword ? 'text' : 'password';
-            document.getElementById('eyeOpen1').style.display = isPassword ? 'none' : '';
-            document.getElementById('eyeClosed1').style.display = isPassword ? '' : 'none';
-            toggleBtn.setAttribute('aria-pressed', String(isPassword));
-            toggleBtn.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
-        });
+    const boton = document.getElementById("btnGuardarContrasena");
+    const passwordInput = document.getElementById("txtNuevaContrasena");
+
+    if (!boton) {
+        return;
     }
 
-    var bars = [
-        document.getElementById('sb1'),
-        document.getElementById('sb2'),
-        document.getElementById('sb3'),
-        document.getElementById('sb4')
-    ];
-    var strengthLabel = document.getElementById('strengthLabel');
+    // Mostrar requisitos en verde
+    if (passwordInput) {
 
-    var requirements = {
-        'req-len': function (value) { return value.length >= 8; },
-        'req-upper': function (value) { return /[A-Z]/.test(value); },
-        'req-lower': function (value) { return /[a-z]/.test(value); },
-        'req-num': function (value) { return /\d/.test(value); },
-        'req-special': function (value) { return /[\W_]/.test(value); }
-    };
+        const requirements = {
+            "req-len": value => value.length >= 8,
+            "req-upper": value => /[A-Z]/.test(value),
+            "req-lower": value => /[a-z]/.test(value),
+            "req-num": value => /\d/.test(value),
+            "req-special": value => /[\W_]/.test(value)
+        };
 
-    var labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
-    var labelClasses = ['', 's1', 's2', 's3', 's4'];
-    var fills = ['', 'filled-1', 'filled-2', 'filled-3', 'filled-4'];
+        function actualizarRequisitos() {
 
-    function updateStrength() {
-        if (!passwordInput) {
+            const value = passwordInput.value;
+
+            Object.keys(requirements).forEach(id => {
+
+                const elemento = document.getElementById(id);
+
+                if (!elemento) return;
+
+                const cumple = requirements[id](value);
+
+                elemento.classList.toggle("met", cumple);
+            });
+        }
+
+        passwordInput.addEventListener("input", actualizarRequisitos);
+        actualizarRequisitos();
+    }
+
+    // Restablecer contraseña
+    boton.addEventListener("click", async function (e) {
+
+        e.preventDefault();
+
+        const correo = document.getElementById("txtCorreo").value.trim();
+        const nuevaContrasena = document.getElementById("txtNuevaContrasena").value.trim();
+
+        if (!correo) {
+            alert("Debe ingresar un correo.");
             return;
         }
 
-        var value = passwordInput.value;
-        var score = 0;
+        if (!nuevaContrasena) {
+            alert("Debe ingresar una contraseña.");
+            return;
+        }
 
-        Object.keys(requirements).forEach(function (id) {
-            var element = document.getElementById(id);
-            var matched = requirements[id](value);
-            if (matched) {
-                score++;
-            }
-            if (element) {
-                element.classList.toggle('met', matched);
-            }
-        });
+        try {
 
-        bars.forEach(function (bar, index) {
-            if (!bar) {
+            const response = await fetch(
+                "https://localhost:44316/usuarios.asmx/RestablecerContrasena",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    },
+                    body: JSON.stringify({
+                        correo: correo,
+                        nuevaContrasena: nuevaContrasena
+                    })
+                }
+            );
+
+            const result = await response.json();
+            const data = result.d || result;
+
+            if (!data.Exitoso) {
+                alert(data.Mensaje || "No fue posible actualizar la contraseña.");
                 return;
             }
-            bar.className = 'strength-bar' + (index < score ? ' ' + fills[score] : '');
-        });
 
-        if (strengthLabel) {
-            strengthLabel.textContent = value.length ? labels[score] : '';
-            strengthLabel.className = 'strength-label' + (value.length ? ' ' + labelClasses[score] : '');
-            strengthLabel.setAttribute('aria-label', 'Fortaleza de la contraseña: ' + (labels[score] || 'Sin evaluar'));
+            alert("Contraseña actualizada correctamente.");
+            window.location.href = "login.aspx";
+
+        } catch (error) {
+
+            console.error(error);
+            alert("Error al conectar con el servidor.");
         }
-    }
-
-    if (passwordInput) {
-        passwordInput.addEventListener('input', updateStrength);
-        updateStrength();
-    }
-})();
+    });
+});

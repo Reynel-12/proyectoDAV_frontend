@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" data-usuarios-api-base="https://localhost:44316/usuarios.asmx">
         <div class="page-shell">
 
             <div class="brand-header">
@@ -27,7 +27,7 @@
                 <div class="brand-tagline">Plataforma Web de Inventario</div>
             </div>
 
-            <asp:Panel ID="pnlForm" runat="server" CssClass="reset-card" DefaultButton="btnGuardarContrasena">
+            <asp:Panel ID="pnlForm" runat="server" ClientIDMode="Static" CssClass="reset-card">
                 <div class="card-header">
                     <div class="card-header-icon blue" aria-hidden="true">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@
                         ValidationGroup="vgReset"
                         DisplayMode="BulletList" />
 
-                    <asp:Panel ID="pnlError" runat="server" Visible="false">
+                    <asp:Panel ID="pnlError" runat="server" ClientIDMode="Static" Style="display: none;">
                         <div class="alert error" role="alert">
                             <span class="alert-icon" aria-hidden="true">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -212,13 +212,12 @@
                 </div>
 
                 <div class="card-footer">
-                    <asp:Button
-                        ID="btnGuardarContrasena"
-                        runat="server"
-                        ValidationGroup="vgReset"
-                        OnClick="btnGuardarContrasena_Click"
-                        CssClass="btn-primary"
-                        Text="Actualizar contraseña" />
+                    <button
+    id="btnGuardarContrasena"
+    type="submit"
+    class="btn-primary">
+    Actualizar contraseña
+</button>
 
                     <div class="security-badge" role="note">
                         <span class="security-badge-icon" aria-hidden="true">
@@ -232,7 +231,7 @@
                 </div>
             </asp:Panel>
 
-            <asp:Panel ID="pnlSuccess" runat="server" Visible="false" CssClass="reset-card">
+            <asp:Panel ID="pnlSuccess" runat="server" ClientIDMode="Static" CssClass="reset-card" Style="display: none;">
                 <div class="success-screen">
                     <div class="success-anim" role="img" aria-label="Éxito">
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -262,7 +261,7 @@
 
         </div>
 
-        <script src="<%= ResolveUrl("~/JS/restablecerContrasena.js") %>"></script>
+        <script src="<%= ResolveUrl("~/JS/restablecerContrasena.js?v=2") %>"></script>
     </form>
 </body>
 </html>

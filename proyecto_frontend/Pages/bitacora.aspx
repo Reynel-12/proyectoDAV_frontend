@@ -176,9 +176,9 @@
                         <option value="creacion">Creación</option>
                         <option value="edicion">Edición</option>
                         <option value="eliminacion">Eliminación</option>
-                        <option value="entrada">Entrada de stock</option>
-                        <option value="salida">Salida de stock</option>
-                        <option value="ajuste">Ajuste</option>
+                        <%--<option value="entrada">Entrada de stock</option>--%>
+                        <%--<option value="salida">Salida de stock</option>
+                        <option value="ajuste">Ajuste</option>--%>
                     </select>
                 </div>
                 <div class="filter-group">

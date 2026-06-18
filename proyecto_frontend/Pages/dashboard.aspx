@@ -5,7 +5,9 @@
 </asp:Content>
 <asp:Content ID="PageBody" ContentPlaceHolderID="BodyContent" runat="server">
     <main class="main-content" id="main-content"
-          data-api-base="https://localhost:44316/bitacora.asmx">
+          data-api-base="https://localhost:44316/bitacora.asmx"
+        data-productos-api-base="https://localhost:44316/productos.asmx">
+
 
         <div class="page-header">
             <h1 class="page-title">Dashboard</h1>
@@ -23,7 +25,7 @@
                         <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none" />
                     </svg>
                 </div>
-                <div class="kpi-value">
+               <div class="kpi-value" id="dashTotalProductos">
                     <asp:Literal ID="litTotalProductos" runat="server" Text="0" />
                 </div>
                 <div class="kpi-label">Total de productos</div>
@@ -31,7 +33,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M12 4L12 20M12 4L18 10M12 4L6 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    +12 este mes
+                    Inventario activo
                 </div>
             </div>
             <div class="kpi-card">
@@ -41,7 +43,7 @@
                         <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="1.5" fill="none" />
                     </svg>
                 </div>
-                <div class="kpi-value">
+                <div class="kpi-value" id="dashBajaExistencia">
                     <asp:Literal ID="litBajaExistenciaCount" runat="server" Text="0" />
                 </div>
                 <div class="kpi-label">Baja existencia</div>
@@ -59,7 +61,7 @@
                         <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </div>
-                <div class="kpi-value">
+                <div class="kpi-value" id="dashStockNormal">
                     <asp:Literal ID="litEnStock" runat="server" Text="0" />
                 </div>
                 <div class="kpi-label">En stock normal</div>
@@ -67,7 +69,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M12 4L12 20M12 4L18 10M12 4L6 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    <asp:Literal ID="litPorcentajeStock" runat="server" Text="0%" />
+                    <span id="dashPorcentajeStock"><asp:Literal ID="litPorcentajeStock" runat="server" Text="0%" /></span>
                 </div>
             </div>
             <div class="kpi-card">
@@ -76,15 +78,15 @@
                         <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </div>
-                <div class="kpi-value">
+                <div class="kpi-value" id="dashBajoStock">
                     <asp:Literal ID="litSinStock" runat="server" Text="0" />
                 </div>
-                <div class="kpi-label">Sin stock</div>
+                 <div class="kpi-label">Bajo stock</div>
                 <div class="kpi-trend down">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M12 20L12 4M12 20L18 14M12 20L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                    -3 vs ayer
+                    1 a 5 uds
                 </div>
             </div>
         </div>
@@ -105,7 +107,7 @@
                         Productos con baja existencia
                     </span>
                 </div>
-                <div class="stock-list">
+                <div class="stock-list" id="dashBajaExistenciaList">
                     <asp:Repeater ID="rptBajaExistencia" runat="server">
                         <ItemTemplate>
                             <div class="stock-item">

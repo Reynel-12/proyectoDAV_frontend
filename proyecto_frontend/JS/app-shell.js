@@ -1,28 +1,23 @@
 (function () {
 
-    function validarSesion() {
-
-        const usuario =
-            sessionStorage.getItem("usuario") ||
-            localStorage.getItem("usuario");
-
-        if (!usuario) {
-
-            const paginaActual =
-                window.location.pathname.toLowerCase();
-
-            if (!paginaActual.includes("login.aspx")) {
-                window.location.href = "login.aspx";
-            }
-
-            return false;
-        }
-
-        return JSON.parse(usuario);
+    function getAppAuth() {
+        return window.AppAuth || null;
     }
 
-    function cargarDatosUsuario() {
-        const usuario = validarSesion();
+    function validarSesion() {
+        const auth = getAppAuth();
+
+        if (!auth || typeof auth.requerirAutenticacion !== "function") {
+            window.location.href = "login.aspx";
+            return null;
+        }
+
+        return auth.requerirAutenticacion({
+            loginPath: "login.aspx"
+        });
+    }
+
+    function cargarDatosUsuario(usuario) {
         if (!usuario) return;
 
         const avatar = document.querySelector(".tb-avatar");
@@ -35,7 +30,6 @@
             avatar.title = usuario.Nombre + " " + usuario.Apellido;
             avatar.setAttribute("aria-label", "Usuario: " + usuario.Nombre + " " + usuario.Apellido);
 
-            // ✅ Color directo en JS, sin depender de CSS
             const colores = ["#3b82f6", "#22c55e", "#a855f7", "#f59e0b", "#ef4444", "#06b6d4"];
             const correo = usuario.Usuario || usuario.Correo || "";
             let hash = 0;
@@ -44,10 +38,19 @@
         }
     }
 
-    function cerrarSesion() {
+    function aplicarVisibilidadSegunRol(usuario) {
+        const auth = getAppAuth();
+        if (auth && typeof auth.aplicarVisibilidadPorRol === "function") {
+            auth.aplicarVisibilidadPorRol(document, usuario);
+        }
+    }
 
-        sessionStorage.removeItem("usuario");
-        localStorage.removeItem("usuario");
+    function cerrarSesion() {
+        const auth = getAppAuth();
+        if (auth && typeof auth.cerrarSesion === "function") {
+            auth.cerrarSesion();
+            return;
+        }
 
         window.location.href = "login.aspx";
     }
@@ -167,16 +170,18 @@
         document.addEventListener(
             "DOMContentLoaded",
             function () {
-                validarSesion();
-                cargarDatosUsuario();
+                const usuario = validarSesion();
+                cargarDatosUsuario(usuario);
+                aplicarVisibilidadSegunRol(usuario);
                 initAppShell();
             }
         );
 
     } else {
 
-        validarSesion();
-        cargarDatosUsuario();
+        const usuario = validarSesion();
+        cargarDatosUsuario(usuario);
+        aplicarVisibilidadSegunRol(usuario);
         initAppShell();
     }
 

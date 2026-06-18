@@ -106,9 +106,9 @@
                         </a>
                     </div>
 
-                    <hr class="nav-divider" />
+                    <hr class="nav-divider" data-admin-only="true" />
 
-                    <div class="nav-section">
+                    <div class="nav-section" data-admin-only="true">
                         <span class="nav-section-label">Movimientos</span>
                         <a class="<%= NavCss("bitacora.aspx") %>" href="<%= ResolveUrl("~/Pages/bitacora.aspx") %>" <%= NavCurrent("bitacora.aspx") %>>
                             <span class="nav-icon" aria-hidden="true">
@@ -123,9 +123,9 @@
                         </a>
                     </div>
 
-                    <hr class="nav-divider" />
+                    <hr class="nav-divider" data-admin-only="true" />
 
-                    <div class="nav-section">
+                    <div class="nav-section" data-admin-only="true">
                         <span class="nav-section-label">Usuarios</span>
                         <a class="<%= NavCss("usuarios.aspx") %>" href="<%= ResolveUrl("~/Pages/usuarios.aspx") %>" <%= NavCurrent("usuarios.aspx") %>>
                             <span class="nav-icon" aria-hidden="true">
@@ -162,6 +162,7 @@
         </div>
     </form>
 
+    <script src="<%= ResolveUrl("~/JS/auth.js") %>"></script>
     <script src="<%= ResolveUrl("~/JS/app-shell.js") %>"></script>
     <asp:ContentPlaceHolder ID="PageScripts" runat="server" />
 </body>

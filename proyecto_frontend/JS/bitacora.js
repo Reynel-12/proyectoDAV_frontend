@@ -1,5 +1,18 @@
 (function () {
     function initBitacoraPage() {
+        if (!window.AppAuth || !window.AppAuth.requerirAdministrador) {
+            window.location.href = 'dashboard.aspx';
+            return;
+        }
+
+        var accesoPermitido = window.AppAuth.requerirAdministrador({
+            loginPath: 'login.aspx',
+            redirectPath: 'dashboard.aspx'
+        });
+        if (!accesoPermitido) {
+            return;
+        }
+
         var main = document.getElementById('main-content');
         if (!main) return;
 

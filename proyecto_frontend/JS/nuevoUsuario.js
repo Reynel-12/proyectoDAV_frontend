@@ -1,5 +1,18 @@
 (function () {
     function initUsuarioForm() {
+        if (!window.AppAuth || !window.AppAuth.requerirAdministrador) {
+            window.location.href = 'dashboard.aspx';
+            return;
+        }
+
+        var usuarioActual = window.AppAuth.requerirAdministrador({
+            loginPath: 'login.aspx',
+            redirectPath: 'dashboard.aspx'
+        });
+        if (!usuarioActual) {
+            return;
+        }
+
         var main = document.getElementById('main-content');
         if (!main) {
             return;
@@ -27,17 +40,7 @@
         }
 
         function getUsuarioActual() {
-            try {
-                var raw = sessionStorage.getItem('usuario') || localStorage.getItem('usuario');
-                if (!raw) {
-                    return 'Sistema web';
-                }
-
-                var usuario = JSON.parse(raw);
-                return usuario.Usuario || usuario.Nombre || 'Sistema web';
-            } catch (error) {
-                return 'Sistema web';
-            }
+            return usuarioActual.Usuario || usuarioActual.Nombre || 'Sistema web';
         }
 
         async function postJson(url, payload) {

@@ -108,8 +108,6 @@
                                 <select id="ddlRol" class="field-select">
                                     <option value="">Selecciona un rol</option>
                                     <option value="Administrador">Administrador</option>
-                                    <option value="Supervisor">Supervisor</option>
-                                    <option value="Operador">Operador</option>
                                     <option value="Usuario">Usuario</option>
                                 </select>
                             </div>

@@ -1,5 +1,18 @@
 (function () {
     function initUsuariosPage() {
+        if (!window.AppAuth || !window.AppAuth.requerirAdministrador) {
+            window.location.href = 'dashboard.aspx';
+            return;
+        }
+
+        var usuarioActual = window.AppAuth.requerirAdministrador({
+            loginPath: 'login.aspx',
+            redirectPath: 'dashboard.aspx'
+        });
+        if (!usuarioActual) {
+            return;
+        }
+
         var main = document.getElementById('main-content');
         if (!main) {
             return;
@@ -39,17 +52,7 @@
         var avatarClasses = ['ua-blue', 'ua-green', 'ua-purple', 'ua-amber', 'ua-cyan', 'ua-pink', 'ua-slate', 'ua-red'];
 
         function getUsuarioActual() {
-            try {
-                var raw = sessionStorage.getItem('usuario') || localStorage.getItem('usuario');
-                if (!raw) {
-                    return 'Sistema web';
-                }
-
-                var usuarioSesion = JSON.parse(raw);
-                return usuarioSesion.Usuario || usuarioSesion.Nombre || 'Sistema web';
-            } catch (error) {
-                return 'Sistema web';
-            }
+            return usuarioActual.Usuario || usuarioActual.Nombre || 'Sistema web';
         }
 
         async function postJson(url, payload) {

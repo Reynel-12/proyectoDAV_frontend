@@ -201,9 +201,8 @@
                     <thead>
                         <tr>
                             <th scope="col">Fecha / hora</th>
-                            <th scope="col">Producto</th>
+                            <th scope="col">Entidad afectada</th>
                             <th scope="col">Tipo</th>
-                            <th scope="col">Cantidad</th>
                             <th scope="col">Usuario</th>
                         </tr>
                     </thead>

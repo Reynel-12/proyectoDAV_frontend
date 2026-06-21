@@ -15,6 +15,9 @@
     const rememberInput = document.getElementById("chkRemember");
     const messageBox = document.getElementById("loginMessage");
     const btnLogin = document.getElementById("btnLogin");
+    const passwordToggle = document.getElementById("toggleLoginPassword");
+
+    setupPasswordToggle(passwordToggle);
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -118,4 +121,36 @@
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
+    function setupPasswordToggle(toggleButton) {
+        if (!toggleButton) {
+            return;
+        }
+
+        const targetId = toggleButton.getAttribute("data-target");
+        const targetInput = document.getElementById(targetId);
+        const openIcon = toggleButton.querySelector(".pw-icon-open");
+        const closedIcon = toggleButton.querySelector(".pw-icon-closed");
+
+        if (!targetInput) {
+            return;
+        }
+
+        toggleButton.addEventListener("click", () => {
+            const shouldShowPassword = targetInput.type === "password";
+
+            targetInput.type = shouldShowPassword ? "text" : "password";
+            toggleButton.setAttribute("aria-pressed", shouldShowPassword ? "true" : "false");
+            toggleButton.setAttribute("aria-label", shouldShowPassword ? "Ocultar contraseña" : "Mostrar contraseña");
+
+            if (openIcon) {
+                openIcon.style.display = shouldShowPassword ? "none" : "";
+            }
+
+            if (closedIcon) {
+                closedIcon.style.display = shouldShowPassword ? "" : "none";
+            }
+        });
+    }
+
 });
+

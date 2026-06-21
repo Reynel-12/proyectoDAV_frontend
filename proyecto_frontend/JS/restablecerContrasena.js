@@ -1,11 +1,14 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
 
     const boton = document.getElementById("btnGuardarContrasena");
     const passwordInput = document.getElementById("txtNuevaContrasena");
+    const passwordToggles = document.querySelectorAll(".btn-pw-toggle");
 
     if (!boton) {
         return;
     }
+
+    passwordToggles.forEach(setupPasswordToggle);
 
     // Mostrar requisitos en verde
     if (passwordInput) {
@@ -38,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         actualizarRequisitos();
     }
 
-    // Restablecer contraseña
+    // Restablecer contraseÃ±a
     boton.addEventListener("click", async function (e) {
 
         e.preventDefault();
@@ -52,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!nuevaContrasena) {
-            alert("Debe ingresar una contraseña.");
+            alert("Debe ingresar una contraseÃ±a.");
             return;
         }
 
@@ -76,11 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = result.d || result;
 
             if (!data.Exitoso) {
-                alert(data.Mensaje || "No fue posible actualizar la contraseña.");
+                alert(data.Mensaje || "No fue posible actualizar la contraseÃ±a.");
                 return;
             }
 
-            alert("Contraseña actualizada correctamente.");
+            alert("ContraseÃ±a actualizada correctamente.");
             window.location.href = "login.aspx";
 
         } catch (error) {
@@ -89,4 +92,35 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Error al conectar con el servidor.");
         }
     });
+
+    function setupPasswordToggle(toggleButton) {
+        if (!toggleButton) {
+            return;
+        }
+
+        const targetId = toggleButton.getAttribute("data-target");
+        const targetInput = document.getElementById(targetId);
+        const openIcon = toggleButton.querySelector("#eyeOpen1, .pw-icon-open");
+        const closedIcon = toggleButton.querySelector("#eyeClosed1, .pw-icon-closed");
+
+        if (!targetInput) {
+            return;
+        }
+
+        toggleButton.addEventListener("click", () => {
+            const shouldShowPassword = targetInput.type === "password";
+
+            targetInput.type = shouldShowPassword ? "text" : "password";
+            toggleButton.setAttribute("aria-pressed", shouldShowPassword ? "true" : "false");
+            toggleButton.setAttribute("aria-label", shouldShowPassword ? "Ocultar contraseña" : "Mostrar contraseña");
+
+            if (openIcon) {
+                openIcon.style.display = shouldShowPassword ? "none" : "";
+            }
+
+            if (closedIcon) {
+                closedIcon.style.display = shouldShowPassword ? "" : "none";
+            }
+        });
+    }
 });

@@ -167,7 +167,6 @@
                     esc(m.OperacionLabel) +
                     '</span>' +
                     '</td>' +
-                    '<td>—</td>' +
                     '<td>' + esc(m.Usuario) + '</td>';
                 tbody.appendChild(tr);
             });

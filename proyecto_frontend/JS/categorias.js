@@ -15,6 +15,7 @@
         var viewCards = document.getElementById('viewCards');
         var viewTable = document.getElementById('viewTable');
         var searchInput = document.getElementById('searchInput');
+        var filterEstado = document.getElementById('filterEstado');
         var resultsCount = document.getElementById('resultsCount');
         var catGrid = document.getElementById('catGrid');
         var tableBody = document.getElementById('tableBody');
@@ -27,9 +28,23 @@
         var btnCancel = document.getElementById('btnModalCancel');
         var categorias = [];
         var filtradas = [];
-        var actualDelete = null;
+        var actualToggle = null;
+        var productosCache = null;
+        var productosApiBase = apiBase.replace(/categorias\.asmx$/i, 'productos.asmx');
 
         var iconos = ['&#128187;', '&#128203;', '&#128230;', '&#9881;', '&#128717;', '&#128736;', '&#128218;', '&#128295;'];
+
+        var SVG_TOGGLE_SMALL =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M12 2V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                '<path d="M6.8 5.2A8 8 0 1 0 17.2 5.2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
+            '</svg>';
+
+        var SVG_ACTIVATE_SMALL =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
+                '<path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
 
         function getUsuarioActual() {
             try {
@@ -111,13 +126,8 @@
                 body: JSON.stringify(payload || {})
             });
 
-            console.log('Status:', response.status);
-
             var text = await response.text();
-            console.log('Respuesta cruda:', text);
-
             var result = JSON.parse(text);
-
             return result.d || result;
         }
 
@@ -139,6 +149,23 @@
             if (totalKpiEl) totalKpiEl.textContent = total;
             if (activasKpiEl) activasKpiEl.textContent = activas;
             if (productosKpiEl) productosKpiEl.textContent = productos;
+        }
+
+        function buildToggleButton(categoria, extraClass) {
+            var activa = !!categoria.Estado;
+            var cls = ['btn-action', activa ? 'del' : '', 'js-toggle-category', extraClass || '']
+                .filter(Boolean).join(' ');
+            var iconStyle = activa ? '' : ' style="color:#16a34a"';
+            var accion = activa ? 'Desactivar' : 'Activar';
+            var svg = activa ? SVG_TOGGLE_SMALL : SVG_ACTIVATE_SMALL;
+
+            return '<button class="' + cls + '" type="button"' +
+                ' data-id="' + categoria.Id + '"' +
+                ' data-estado="' + (activa ? 'true' : 'false') + '"' +
+                ' aria-label="' + accion + ' categoría ' + escapeHtml(categoria.Nombre) + '"' +
+                iconStyle + '>' +
+                svg +
+                '</button>';
         }
 
         function renderEmptyState() {
@@ -197,6 +224,9 @@
                 card.className = 'cat-card';
                 card.setAttribute('data-nombre', categoria.Nombre || '');
                 card.setAttribute('data-activa', categoria.Estado ? 'true' : 'false');
+                if (!categoria.Estado) {
+                    card.style.opacity = '0.65';
+                }
                 card.innerHTML =
                     '<div class="cat-card-header">' +
                         '<div class="cat-icon-wrap" style="background: var(--cat-bg-' + visual.colorIdx + '); color: var(--cat-clr-' + visual.colorIdx + ')" aria-hidden="true">' + visual.icono + '</div>' +
@@ -206,7 +236,10 @@
                         '</div>' +
                     '</div>' +
                     '<div class="cat-card-meta">' +
-                        '<div class="meta-chip"><span class="meta-chip-dot"></span><span><strong>' + Number(categoria.CantProductos || 0) + '</strong> productos</span></div>' +
+                        '<button type="button" class="meta-chip meta-chip-btn js-ver-productos" data-cat-id="' + categoria.Id + '" aria-label="Ver productos de ' + escapeHtml(categoria.Nombre) + '">' +
+                            '<span class="meta-chip-dot"></span>' +
+                            '<span><strong>' + Number(categoria.CantProductos || 0) + '</strong> productos</span>' +
+                        '</button>' +
                         '<span class="cat-status-pill ' + estadoClase + '">' + estadoTexto + '</span>' +
                     '</div>' +
                     '<div class="cat-card-footer">' +
@@ -214,21 +247,25 @@
                         '<a class="btn-action edit" href="editarCategoria.aspx?id=' + encodeURIComponent(categoria.Id) + '" aria-label="Editar categoría ' + escapeHtml(categoria.Nombre) + '">' +
                             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>' +
                         '</a>' +
-                        '<button class="btn-action del js-delete-category" type="button" data-id="' + categoria.Id + '" aria-label="Eliminar categoría ' + escapeHtml(categoria.Nombre) + '">' +
-                            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>' +
-                        '</button>' +
+                        buildToggleButton(categoria) +
                     '</div>';
 
                 var row = document.createElement('tr');
                 row.setAttribute('data-nombre', categoria.Nombre || '');
                 row.setAttribute('data-activa', categoria.Estado ? 'true' : 'false');
+                if (!categoria.Estado) {
+                    row.style.opacity = '0.65';
+                }
                 row.innerHTML =
                     '<td><div class="td-icon-name"><div class="tbl-cat-icon" style="background: var(--cat-bg-' + visual.colorIdx + '); color: var(--cat-clr-' + visual.colorIdx + ')" aria-hidden="true">' + visual.icono + '</div><span class="tbl-cat-name">' + escapeHtml(categoria.Nombre) + '</span></div></td>' +
                     '<td><span class="tbl-desc" title="' + escapeHtml(categoria.Descripcion || '') + '">' + escapeHtml(categoria.Descripcion || '') + '</span></td>' +
-                    '<td class="td-center"><strong>' + Number(categoria.CantProductos || 0) + '</strong></td>' +
+                    '<td class="td-center"><button type="button" class="td-prod-count-btn js-ver-productos" data-cat-id="' + categoria.Id + '" title="Ver productos de ' + escapeHtml(categoria.Nombre) + '">' + Number(categoria.CantProductos || 0) + '</button></td>' +
                     '<td class="td-center"><span class="cat-status-pill ' + estadoClase + '">' + estadoTexto + '</span></td>' +
                     '<td class="td-center">' + escapeHtml(fecha) + '</td>' +
-                    '<td class="td-center"><div class="action-wrap"><a class="btn-action edit" href="editarCategoria.aspx?id=' + encodeURIComponent(categoria.Id) + '" aria-label="Editar categoría ' + escapeHtml(categoria.Nombre) + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></a><button class="btn-action del js-delete-category" type="button" data-id="' + categoria.Id + '" aria-label="Eliminar categoría ' + escapeHtml(categoria.Nombre) + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button></div></td>';
+                    '<td class="td-center"><div class="action-wrap">' +
+                        '<a class="btn-action edit" href="editarCategoria.aspx?id=' + encodeURIComponent(categoria.Id) + '" aria-label="Editar categoría ' + escapeHtml(categoria.Nombre) + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></a>' +
+                        buildToggleButton(categoria) +
+                    '</div></td>';
 
                 catGrid.appendChild(card);
                 tableBody.appendChild(row);
@@ -241,10 +278,19 @@
 
         function aplicarBusqueda() {
             var q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            var estado = filterEstado ? filterEstado.value : 'activo';
+
             filtradas = categorias.filter(function (categoria) {
-                return !q ||
+                var matchQ = !q ||
                     String(categoria.Nombre || '').toLowerCase().indexOf(q) >= 0 ||
                     String(categoria.Descripcion || '').toLowerCase().indexOf(q) >= 0;
+
+                var activa = !!categoria.Estado;
+                var matchEstado = !estado ||
+                    (estado === 'activo' && activa) ||
+                    (estado === 'inactivo' && !activa);
+
+                return matchQ && matchEstado;
             });
 
             renderCategorias();
@@ -277,22 +323,55 @@
         }
 
         function closeModal() {
-            actualDelete = null;
+            actualToggle = null;
             if (modal) {
                 modal.classList.remove('open');
             }
         }
 
-        function openDeleteModal(categoria) {
-            actualDelete = categoria;
+        function openToggleModal(categoria) {
+            actualToggle = categoria;
             if (!modal) {
                 return;
             }
 
+            var activa = !!categoria.Estado;
+            var modalTitle = document.getElementById('modalTitle');
+            var modalSubtitle = document.getElementById('modalSubtitle');
+            var modalWarningText = document.getElementById('modalWarningText');
             var modalName = document.getElementById('modalCatName');
             var modalCount = document.getElementById('modalCatCount');
             var modalIcon = document.getElementById('modalCatIcon');
             var visual = buildVisualData(categoria, categoria.Id || 0);
+
+            if (modalTitle) {
+                modalTitle.textContent = activa ? 'Desactivar categoría' : 'Activar categoría';
+            }
+            if (modalSubtitle) {
+                modalSubtitle.textContent = activa
+                    ? 'La categoría quedará inactiva y no estará disponible para nuevos productos.'
+                    : 'La categoría volverá a estar activa y disponible para los productos.';
+            }
+            if (modalWarningText) {
+                if (activa) {
+                    var numActivos = Number(categoria.CantProductosActivos || 0);
+                    var numTotal = Number(categoria.CantProductos || 0);
+                    if (numActivos > 0) {
+                        modalWarningText.textContent = 'Esta categoría tiene ' + numActivos + ' producto' + (numActivos === 1 ? '' : 's') +
+                            ' activo' + (numActivos === 1 ? '' : 's') + '. Desactívalos primero desde la página de productos.';
+                    } else if (numTotal > 0) {
+                        modalWarningText.textContent = 'La categoría tiene ' + numTotal + ' producto' + (numTotal === 1 ? '' : 's') +
+                            ' inactivo' + (numTotal === 1 ? '' : 's') + '. Puedes desactivarla sin problema.';
+                    } else {
+                        modalWarningText.textContent = 'La categoría quedará inactiva. Podrás reactivarla en cualquier momento.';
+                    }
+                } else {
+                    modalWarningText.textContent = 'La categoría volverá a estar activa y disponible para los productos.';
+                }
+            }
+            if (btnDelete) {
+                btnDelete.textContent = activa ? 'Sí, desactivar' : 'Sí, activar';
+            }
 
             if (modalName) modalName.textContent = categoria.Nombre || '';
             if (modalCount) {
@@ -312,42 +391,106 @@
             }
         }
 
-        async function eliminarCategoria() {
-            if (!actualDelete) {
+        async function toggleCategoria() {
+            if (!actualToggle) {
                 return;
             }
 
+            var nuevoEstado = !actualToggle.Estado;
+
             try {
-                var result = await postJson(apiBase + '/EliminarCategoria', {
-                    id: actualDelete.Id,
+                var result = await postJson(apiBase + '/CambiarEstadoCategoria', {
+                    id: actualToggle.Id,
+                    estado: nuevoEstado,
                     usuario: getUsuarioActual()
                 });
 
                 if (!result.Exitoso) {
-                    throw new Error(result.Mensaje || 'No fue posible eliminar la categoría.');
+                    throw new Error(result.Mensaje || 'No fue posible cambiar el estado de la categoría.');
                 }
 
-                categorias = categorias.filter(function (categoria) {
-                    return categoria.Id !== actualDelete.Id;
+                var idActualizado = actualToggle.Id;
+                categorias = categorias.map(function (cat) {
+                    if (cat.Id === idActualizado) {
+                        cat.Estado = nuevoEstado;
+                    }
+                    return cat;
                 });
 
                 actualizarResumen();
                 aplicarBusqueda();
                 closeModal();
-                showToast(result.Mensaje || 'Categoría eliminada correctamente.', 'success');
+                showToast(result.Mensaje || 'Estado actualizado correctamente.', 'success');
             } catch (error) {
                 closeModal();
-                showToast(error.message || 'No fue posible eliminar la categoría.', 'error');
+                showToast(error.message || 'No fue posible cambiar el estado de la categoría.', 'error');
+            }
+        }
+
+        function closeProductosModal() {
+            var pModal = document.getElementById('productosModal');
+            if (pModal) {
+                pModal.classList.remove('open');
+            }
+        }
+
+        async function openProductosModal(categoria) {
+            var pModal = document.getElementById('productosModal');
+            var titleEl = document.getElementById('modalProductosTitle');
+            var subtitleEl = document.getElementById('modalProductosSubtitle');
+            var listEl = document.getElementById('modalProductosList');
+
+            if (!pModal || !listEl) {
+                return;
+            }
+
+            if (titleEl) titleEl.textContent = categoria.Nombre;
+            if (subtitleEl) subtitleEl.textContent = 'Cargando productos...';
+            listEl.innerHTML = '<div class="modal-prod-empty">Cargando...</div>';
+            pModal.classList.add('open');
+
+            try {
+                if (!productosCache) {
+                    var result = await postJson(productosApiBase + '/ListarProductos', {});
+                    if (!result.Exitoso) {
+                        throw new Error(result.Mensaje || 'Error al cargar productos.');
+                    }
+                    productosCache = result.Productos || [];
+                }
+
+                var prods = productosCache.filter(function (p) {
+                    return p.CategoriaId === categoria.Id;
+                });
+
+                if (subtitleEl) {
+                    subtitleEl.textContent = prods.length === 0
+                        ? 'Sin productos asignados'
+                        : prods.length + ' producto' + (prods.length === 1 ? '' : 's') + ' asignado' + (prods.length === 1 ? '' : 's');
+                }
+
+                if (prods.length === 0) {
+                    listEl.innerHTML = '<div class="modal-prod-empty">Esta categoría no tiene productos asignados.</div>';
+                } else {
+                    listEl.innerHTML = prods.map(function (prod) {
+                        var activo = prod.Estado !== false;
+                        return '<div class="modal-prod-item' + (activo ? '' : ' inactivo') + '">' +
+                            '<div class="modal-prod-info">' +
+                                '<span class="modal-prod-codigo">#' + escapeHtml(String(prod.Codigo)) + '</span>' +
+                                '<span class="modal-prod-desc" title="' + escapeHtml(prod.Descripcion) + '">' + escapeHtml(prod.Descripcion) + '</span>' +
+                            '</div>' +
+                            '<span class="cat-status-pill ' + (activo ? 'activa' : 'inactiva') + '" style="flex-shrink:0">' + (activo ? 'Activo' : 'Inactivo') + '</span>' +
+                        '</div>';
+                    }).join('');
+                }
+            } catch (error) {
+                listEl.innerHTML = '<div class="modal-prod-empty">No fue posible cargar los productos.</div>';
+                if (subtitleEl) subtitleEl.textContent = '';
             }
         }
 
         async function cargarCategorias() {
             try {
-                console.log('Consultando API...');
-
                 var result = await postJson(apiBase + '/ListarCategorias', {});
-
-                console.log('Respuesta API:', result);
 
                 if (!result.Exitoso) {
                     throw new Error(result.Mensaje);
@@ -358,10 +501,6 @@
                 aplicarBusqueda();
             }
             catch (error) {
-                console.error('Error completo:', error);
-
-                alert(error.message);
-
                 showToast(error.message || 'No fue posible cargar las categorías.', 'error');
             }
         }
@@ -369,6 +508,37 @@
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closeModal();
+                closeProductosModal();
+            }
+        });
+
+        var btnCerrarProductos = document.getElementById('btnCerrarProductos');
+        if (btnCerrarProductos) {
+            btnCerrarProductos.addEventListener('click', closeProductosModal);
+        }
+
+        var productosModalEl = document.getElementById('productosModal');
+        if (productosModalEl) {
+            productosModalEl.addEventListener('click', function (event) {
+                if (event.target === productosModalEl) {
+                    closeProductosModal();
+                }
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            var verBtn = event.target.closest('.js-ver-productos');
+            if (!verBtn) {
+                return;
+            }
+
+            var catId = parseInt(verBtn.getAttribute('data-cat-id') || '0', 10);
+            var categoria = categorias.find(function (c) {
+                return c.Id === catId;
+            });
+
+            if (categoria) {
+                openProductosModal(categoria);
             }
         });
 
@@ -390,6 +560,10 @@
             searchInput.addEventListener('input', aplicarBusqueda);
         }
 
+        if (filterEstado) {
+            filterEstado.addEventListener('change', aplicarBusqueda);
+        }
+
         if (btnCancel) {
             btnCancel.addEventListener('click', closeModal);
         }
@@ -403,22 +577,22 @@
         }
 
         if (btnDelete) {
-            btnDelete.addEventListener('click', eliminarCategoria);
+            btnDelete.addEventListener('click', toggleCategoria);
         }
 
         document.addEventListener('click', function (event) {
-            var deleteButton = event.target.closest('.js-delete-category');
-            if (!deleteButton) {
+            var toggleButton = event.target.closest('.js-toggle-category');
+            if (!toggleButton) {
                 return;
             }
 
-            var id = parseInt(deleteButton.getAttribute('data-id') || '0', 10);
+            var id = parseInt(toggleButton.getAttribute('data-id') || '0', 10);
             var categoria = categorias.find(function (item) {
                 return item.Id === id;
             });
 
             if (categoria) {
-                openDeleteModal(categoria);
+                openToggleModal(categoria);
             }
         });
 

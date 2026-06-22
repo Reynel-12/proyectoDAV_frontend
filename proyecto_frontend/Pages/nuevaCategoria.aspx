@@ -100,7 +100,7 @@
                             <div class="char-counter" id="charCounter">0 / 200</div>
                         </div>
 
-                        <div class="field">
+                       <%-- <div class="field">
                             <label class="field-label" for="chkEstado">Estado</label>
                             <div class="field-hint">Las categorías inactivas no estarán disponibles al crear productos.</div>
                             <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--clr-gray-700); margin-top: 10px;">
@@ -108,7 +108,7 @@
                                 Categoría activa
                                        
                             </label>
-                        </div>
+                        </div>--%>
                     </div>
 
                     <div class="required-legend" style="font-size: 12px; color: var(--clr-gray-400); padding: 0 24px 14px">

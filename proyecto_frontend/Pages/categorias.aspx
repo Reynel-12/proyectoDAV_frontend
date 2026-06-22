@@ -74,6 +74,11 @@
                             <input type="search" class="search-input" id="searchInput"
                                 placeholder="Buscar categoría..." aria-label="Buscar categoría" autocomplete="off" />
                         </div>
+                        <select class="filter-select" id="filterEstado" aria-label="Filtrar por estado">
+                            <option value="activo">Solo activas</option>
+                            <option value="inactivo">Solo inactivas</option>
+                            <option value="">Todas</option>
+                        </select>
                         <span class="results-count" id="resultsCount" aria-live="polite"></span>
                     </div>
 
@@ -125,22 +130,19 @@
 
                 </main>
 
-        <!-- Delete modal -->
+        <!-- Toggle estado modal -->
         <div class="modal-backdrop" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal">
                 <div class="modal-header">
                     <div class="modal-icon-wrap" aria-hidden="true">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M12 2V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M6.8 5.2A8 8 0 1 0 17.2 5.2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
                         </svg>
                     </div>
                     <div>
-                        <div class="modal-title" id="modalTitle">Eliminar categoría</div>
-                        <div class="modal-subtitle">Esta acción es permanente y no se puede deshacer.</div>
+                        <div class="modal-title" id="modalTitle">Cambiar estado</div>
+                        <div class="modal-subtitle" id="modalSubtitle">El estado de la categoría será actualizado.</div>
                     </div>
                 </div>
                 <div class="modal-cat-ref" id="modalCatRef">
@@ -155,20 +157,34 @@
                         <path d="M12 8V12M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
                     </svg>
-                    Si la categoría tiene productos asignados, deberás reasignarlos antes de eliminarla. Esta acción podría afectar los reportes existentes.
+                    <span id="modalWarningText">Las categorías inactivas no estarán disponibles al registrar nuevos productos.</span>
                 </div>
                 <div class="modal-actions">
                     <button class="btn-modal-cancel" id="btnModalCancel" type="button">Cancelar</button>
-                    <button class="btn-modal-delete" id="btnModalDelete" type="button">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                            <path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <button class="btn-modal-delete" id="btnModalDelete" type="button">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos de categoría modal -->
+        <div class="modal-backdrop" id="productosModal" role="dialog" aria-modal="true" aria-labelledby="modalProductosTitle">
+            <div class="modal modal-productos">
+                <div class="modal-header">
+                    <div class="modal-icon-wrap" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 6H20V18H4V6Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M8 6V4H16V6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
                         </svg>
-                        Sí, eliminar
-                    </button>
+                    </div>
+                    <div>
+                        <div class="modal-title" id="modalProductosTitle">Productos</div>
+                        <div class="modal-subtitle" id="modalProductosSubtitle"></div>
+                    </div>
+                </div>
+                <div id="modalProductosList" class="modal-prod-list"></div>
+                <div class="modal-actions">
+                    <button class="btn-modal-cancel" id="btnCerrarProductos" type="button">Cerrar</button>
                 </div>
             </div>
         </div>

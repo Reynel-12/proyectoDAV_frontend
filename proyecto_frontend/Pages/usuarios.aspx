@@ -149,8 +149,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="modal-title" id="deleteModalTitle">Desactivar usuario</div>
-                        <div class="modal-subtitle">Esta acción aplicará un eliminado lógico cambiando el estado a inactivo.</div>
+                        <div class="modal-title" id="deleteModalTitle">Cambiar estado</div>
+                        <div class="modal-subtitle" id="modalSubtitle">El estado del usuario será actualizado.</div>
                     </div>
                 </div>
 
@@ -163,12 +163,12 @@
                 </div>
 
                 <div class="modal-warning">
-                    El usuario conservará su registro histórico, pero ya no podrá iniciar sesión mientras permanezca inactivo.
+                    <span id="modalWarningText">El usuario conservará su registro histórico, pero no podrá iniciar sesión mientras permanezca inactivo.</span>
                 </div>
 
                 <div class="modal-actions">
                     <button type="button" class="btn-modal-cancel" id="btnModalCancel">Cancelar</button>
-                    <button type="button" class="btn-modal-delete" id="btnModalDelete">Desactivar usuario</button>
+                    <button type="button" class="btn-modal-delete" id="btnModalDelete">Confirmar</button>
                 </div>
             </div>
         </div>

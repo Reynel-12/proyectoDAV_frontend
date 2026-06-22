@@ -21,14 +21,27 @@
         var searchInput = document.getElementById('searchInput');
         var filterCategoria = document.getElementById('filterCategoria');
         var filterStock = document.getElementById('filterStock');
+        var filterEstado = document.getElementById('filterEstado');
         var resultsCount = document.getElementById('resultsCount');
         var footerInfo = document.getElementById('footerInfo');
         var mobileMq = window.matchMedia('(max-width: 768px)');
         var currentView = mobileMq.matches ? 'card' : 'table';
-        var currentDeleteItem = null;
+        var currentToggleItem = null;
         var productos = [];
         var filteredProducts = [];
         var currentSort = { col: 'codigo', asc: true };
+
+        var SVG_DEACTIVATE =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M12 2V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                '<path d="M6.8 5.2A8 8 0 1 0 17.2 5.2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
+            '</svg>';
+
+        var SVG_ACTIVATE =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
+                '<path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
 
         function getUsuarioActual() {
             try {
@@ -172,6 +185,25 @@
             });
         }
 
+        function buildToggleButton(producto, extraClass) {
+            var activo = producto.Estado !== false;
+            var iconClass = activo ? 'del' : '';
+            var iconStyle = activo ? '' : ' style="color:#16a34a"';
+            var iconSvg = activo ? SVG_DEACTIVATE : SVG_ACTIVATE;
+            var accion = activo ? 'Desactivar' : 'Activar';
+            var cls = ['btn-action', 'js-toggle-product', iconClass, extraClass || '']
+                .filter(Boolean).join(' ');
+
+            return '<button class="' + cls + '" type="button"' +
+                ' data-codigo="' + escapeHtml(producto.Codigo) + '"' +
+                ' data-estado="' + (activo ? 'true' : 'false') + '"' +
+                ' title="' + accion + ' producto ' + escapeHtml(producto.Codigo) + '"' +
+                ' aria-label="' + accion + ' ' + escapeHtml(producto.Codigo) + '"' +
+                iconStyle + '>' +
+                iconSvg +
+                '</button>';
+        }
+
         function renderProducts() {
             if (!tableBody || !cardView) {
                 return;
@@ -182,6 +214,11 @@
 
             filteredProducts.forEach(function (producto) {
                 var fotoUrl = resolvePhotoUrl(producto.Fotografia);
+                var activo = producto.Estado !== false;
+                var estadoBadge = activo
+                    ? '<span class="cat-status-pill activa" style="font-size:.7rem;padding:2px 8px">Activo</span>'
+                    : '<span class="cat-status-pill inactiva" style="font-size:.7rem;padding:2px 8px">Inactivo</span>';
+
                 var tableRow = document.createElement('tr');
                 tableRow.setAttribute('data-codigo', producto.Codigo);
                 tableRow.setAttribute('data-desc', producto.Descripcion || '');
@@ -190,15 +227,20 @@
                 tableRow.setAttribute('data-existencia', producto.Existencia);
                 tableRow.setAttribute('data-preciocompra', producto.PrecioCompra);
                 tableRow.setAttribute('data-precioventa', producto.PrecioVenta);
+                if (!activo) {
+                    tableRow.style.opacity = '0.65';
+                }
+
                 tableRow.innerHTML =
                     '<td>' +
                         '<div class="prod-thumb-wrap">' +
                             (fotoUrl
-                                ? '<img class="prod-thumb" src="' + escapeHtml(fotoUrl) + '" alt="Foto de ' + escapeHtml(producto.Codigo) + '" loading="lazy" />'
+                                ? '<img class="prod-thumb" src="' + escapeHtml(fotoUrl) + '" alt="Foto de ' + escapeHtml(producto.Descripcion) + '" loading="lazy" />'
                                 : '<div class="prod-thumb-placeholder" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="20" height="18" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M9 11L6 16H18L15 13L12 15L9 11Z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="16.5" cy="8.5" r="1.5" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg></div>') +
                             '<div>' +
-                                '<div class="prod-codigo">' + escapeHtml(producto.Codigo) + '</div>' +
-                                '<div class="prod-desc" title="' + escapeHtml(producto.Descripcion) + '">' + escapeHtml(producto.Descripcion) + '</div>' +
+                                '<div class="prod-codigo" title="' + escapeHtml(producto.Descripcion) + '">' + escapeHtml(producto.Descripcion) + '</div>' +
+                                '<div class="prod-desc">#' + escapeHtml(producto.Codigo) + '</div>' +
+                                estadoBadge +
                             '</div>' +
                         '</div>' +
                     '</td>' +
@@ -212,9 +254,7 @@
                             '<a class="btn-action edit" href="editarProducto.aspx?id=' + encodeURIComponent(producto.Codigo) + '" title="Editar producto ' + escapeHtml(producto.Codigo) + '" aria-label="Editar ' + escapeHtml(producto.Codigo) + '">' +
                                 '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" /></svg>' +
                             '</a>' +
-                            '<button class="btn-action del js-delete-product" type="button" data-codigo="' + escapeHtml(producto.Codigo) + '" title="Eliminar producto ' + escapeHtml(producto.Codigo) + '" aria-label="Eliminar ' + escapeHtml(producto.Codigo) + '">' +
-                                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /><path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /><path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /><path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" /><path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" /></svg>' +
-                            '</button>' +
+                            buildToggleButton(producto) +
                         '</div>' +
                     '</td>';
 
@@ -224,6 +264,9 @@
                 card.setAttribute('data-desc', producto.Descripcion || '');
                 card.setAttribute('data-cat', getCategoryName(producto));
                 card.setAttribute('data-stock', producto.StockEstado || '');
+                if (!activo) {
+                    card.style.opacity = '0.65';
+                }
                 card.innerHTML =
                     (fotoUrl
                         ? '<img class="prod-card-img" src="' + escapeHtml(fotoUrl) + '" alt="Fotografía de ' + escapeHtml(producto.Codigo) + '" loading="lazy" />'
@@ -231,6 +274,7 @@
                     '<div class="prod-card-body">' +
                         '<div class="prod-card-row"><span class="prod-card-code">' + escapeHtml(producto.Codigo) + '</span><span class="cat-pill">' + escapeHtml(getCategoryName(producto)) + '</span></div>' +
                         '<div class="prod-card-desc" title="' + escapeHtml(producto.Descripcion) + '">' + escapeHtml(producto.Descripcion) + '</div>' +
+                        '<div style="margin-top:4px">' + estadoBadge + '</div>' +
                         '<div class="prod-card-meta">' +
                             '<div><div class="meta-item-label">P. Compra</div><div class="meta-item-val">' + formatMoney(producto.PrecioCompra) + '</div></div>' +
                             '<div><div class="meta-item-label">P. Venta</div><div class="meta-item-val">' + formatMoney(producto.PrecioVenta) + '</div></div>' +
@@ -243,10 +287,7 @@
                             '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" /></svg>' +
                             'Editar' +
                         '</a>' +
-                        '<button class="btn-card-del js-delete-product" type="button" data-codigo="' + escapeHtml(producto.Codigo) + '" aria-label="Eliminar ' + escapeHtml(producto.Codigo) + '">' +
-                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /><path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /><path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /><path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" /><path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" /></svg>' +
-                            'Eliminar' +
-                        '</button>' +
+                        buildToggleButton(producto, 'btn-card-del') +
                     '</div>';
 
                 tableBody.appendChild(tableRow);
@@ -262,6 +303,7 @@
             var q = (searchInput && searchInput.value || '').toLowerCase().trim();
             var categoria = filterCategoria ? filterCategoria.value : '';
             var stock = filterStock ? filterStock.value : '';
+            var estado = filterEstado ? filterEstado.value : 'activo';
 
             filteredProducts = productos.filter(function (producto) {
                 var matchQ = !q ||
@@ -271,7 +313,13 @@
 
                 var matchCategoria = !categoria || getCategoryName(producto) === categoria;
                 var matchStock = !stock || producto.StockEstado === stock;
-                return matchQ && matchCategoria && matchStock;
+
+                var activo = producto.Estado !== false;
+                var matchEstado = !estado ||
+                    (estado === 'activo' && activo) ||
+                    (estado === 'inactivo' && !activo);
+
+                return matchQ && matchCategoria && matchStock && matchEstado;
             });
 
             sortProducts(filteredProducts);
@@ -286,7 +334,7 @@
             }
 
             if (totalCountLabel) {
-                totalCountLabel.textContent = String(productos.length);
+                totalCountLabel.textContent = String(productos.filter(function (p) { return p.Estado !== false; }).length);
             }
         }
 
@@ -299,31 +347,56 @@
             });
         }
 
-        function openDeleteModal(producto) {
-            currentDeleteItem = producto;
+        function openToggleModal(producto) {
+            currentToggleItem = producto;
 
             var modal = document.getElementById('deleteModal');
+            var modalTitle = document.getElementById('modalTitle');
+            var modalSubtitle = document.getElementById('modalSubtitle');
+            var modalWarningText = document.getElementById('modalWarningText');
+            var btnModalDelete = document.getElementById('btnModalDelete');
             var modalName = document.getElementById('modalProductName');
             var modalCode = document.getElementById('modalProductCode');
             var modalImg = document.getElementById('modalProductImg');
             var modalImgPh = document.getElementById('modalImgPlaceholder');
 
-            if (!modal || !modalName || !modalCode || !modalImg || !modalImgPh) {
+            if (!modal) {
                 return;
             }
 
-            modalName.textContent = producto.Descripcion;
-            modalCode.textContent = 'Código: ' + producto.Codigo;
+            var activo = producto.Estado !== false;
+
+            if (modalTitle) {
+                modalTitle.textContent = activo ? 'Desactivar producto' : 'Activar producto';
+            }
+            if (modalSubtitle) {
+                modalSubtitle.textContent = activo
+                    ? 'El producto no estará disponible para nuevas operaciones.'
+                    : 'El producto volverá a estar disponible en el inventario.';
+            }
+            if (modalWarningText) {
+                modalWarningText.textContent = activo
+                    ? 'Podrás reactivarlo en cualquier momento desde el listado de productos inactivos.'
+                    : 'El producto quedará activo y aparecerá en el inventario nuevamente.';
+            }
+            if (btnModalDelete) {
+                btnModalDelete.textContent = activo ? 'Sí, desactivar' : 'Sí, activar';
+            }
+
+            if (modalName) modalName.textContent = producto.Descripcion;
+            if (modalCode) modalCode.textContent = 'Código: ' + producto.Codigo;
 
             var fotoUrl = resolvePhotoUrl(producto.Fotografia);
-            if (fotoUrl) {
-                modalImg.src = fotoUrl;
-                modalImg.alt = 'Foto de ' + producto.Codigo;
-                modalImg.style.display = '';
-                modalImgPh.style.display = 'none';
-            } else {
-                modalImg.style.display = 'none';
-                modalImgPh.style.display = '';
+            if (modalImg && modalImgPh) {
+                if (fotoUrl) {
+                    modalImg.src = fotoUrl;
+                    modalImg.alt = 'Foto de ' + producto.Codigo;
+                    modalImg.style.display = '';
+                    modalImgPh.style.display = 'none';
+                } else {
+                    modalImg.style.display = 'none';
+                    modalImgPh.style.display = '';
+                }
             }
 
             modal.classList.add('open');
@@ -334,38 +407,45 @@
             if (modal) {
                 modal.classList.remove('open');
             }
-            currentDeleteItem = null;
+            currentToggleItem = null;
         }
 
-        async function eliminarProductoActual() {
-            if (!currentDeleteItem) {
+        async function toggleEstadoProducto() {
+            if (!currentToggleItem) {
                 return;
             }
 
+            var nuevoEstado = currentToggleItem.Estado === false ? true : false;
             var btnDelete = document.getElementById('btnModalDelete');
             if (btnDelete) {
                 btnDelete.disabled = true;
             }
 
             try {
-                var result = await postJson(apiBase + '/EliminarProducto', {
-                    codigo: currentDeleteItem.Codigo,
+                var result = await postJson(apiBase + '/CambiarEstadoProducto', {
+                    codigo: currentToggleItem.Codigo,
+                    estado: nuevoEstado,
                     usuario: getUsuarioActual()
                 });
 
                 if (!result.Exitoso) {
-                    throw new Error(result.Mensaje || 'No fue posible eliminar el producto.');
+                    throw new Error(result.Mensaje || 'No fue posible cambiar el estado del producto.');
                 }
 
-                productos = productos.filter(function (item) {
-                    return item.Codigo !== currentDeleteItem.Codigo;
+                var codigoActualizado = currentToggleItem.Codigo;
+                productos = productos.map(function (item) {
+                    if (item.Codigo === codigoActualizado) {
+                        item.Estado = nuevoEstado;
+                    }
+                    return item;
                 });
 
                 closeDeleteModal();
                 applyFilters();
-                showToast(result.Mensaje || 'Producto eliminado correctamente.', 'success');
+                showToast(result.Mensaje || 'Estado actualizado correctamente.', 'success');
             } catch (error) {
-                showToast(error.message || 'No fue posible eliminar el producto.', 'error');
+                closeDeleteModal();
+                showToast(error.message || 'No fue posible cambiar el estado del producto.', 'error');
             } finally {
                 if (btnDelete) {
                     btnDelete.disabled = false;
@@ -421,6 +501,9 @@
         if (filterStock) {
             filterStock.addEventListener('change', applyFilters);
         }
+        if (filterEstado) {
+            filterEstado.addEventListener('change', applyFilters);
+        }
 
         document.querySelectorAll('th.sortable').forEach(function (th) {
             th.addEventListener('click', function () {
@@ -438,15 +521,15 @@
         });
 
         document.addEventListener('click', function (event) {
-            var deleteButton = event.target.closest('.js-delete-product');
-            if (deleteButton) {
-                var codigo = parseInt(deleteButton.getAttribute('data-codigo'), 10);
+            var toggleButton = event.target.closest('.js-toggle-product');
+            if (toggleButton) {
+                var codigo = parseInt(toggleButton.getAttribute('data-codigo'), 10);
                 var producto = productos.find(function (item) {
                     return item.Codigo === codigo;
                 });
 
                 if (producto) {
-                    openDeleteModal(producto);
+                    openToggleModal(producto);
                 }
             }
         });
@@ -474,7 +557,7 @@
         }
 
         if (btnDelete) {
-            btnDelete.addEventListener('click', eliminarProductoActual);
+            btnDelete.addEventListener('click', toggleEstadoProducto);
         }
 
         var qs = new URLSearchParams(window.location.search);

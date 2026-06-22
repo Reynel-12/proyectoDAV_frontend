@@ -47,9 +47,21 @@
         var currentView = mobileMq.matches ? 'card' : 'table';
         var usuarios = [];
         var filtrados = [];
-        var actualDelete = null;
+        var actualToggle = null;
         var sortState = { col: '', asc: true };
         var avatarClasses = ['ua-blue', 'ua-green', 'ua-purple', 'ua-amber', 'ua-cyan', 'ua-pink', 'ua-slate', 'ua-red'];
+
+        var SVG_DEACTIVATE =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none">' +
+                '<path d="M12 2V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+                '<path d="M6.8 5.2A8 8 0 1 0 17.2 5.2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>' +
+            '</svg>';
+
+        var SVG_ACTIVATE =
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none">' +
+                '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
+                '<path d="M8 12L11 15L16 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
 
         function getUsuarioActual() {
             return usuarioActual.Usuario || usuarioActual.Nombre || 'Sistema web';
@@ -232,6 +244,40 @@
             }
         }
 
+        function buildToggleButton(usuario, small) {
+            var activo = !!usuario.Estado;
+            var cls = ['btn-action', activo ? 'del' : '', 'js-toggle-user', small ? '' : '']
+                .filter(Boolean).join(' ');
+            var iconStyle = activo ? '' : ' style="color:#16a34a"';
+            var accion = activo ? 'Desactivar' : 'Activar';
+            var svg = activo ? SVG_DEACTIVATE : SVG_ACTIVATE;
+
+            return '<button class="' + cls + '" type="button"' +
+                ' data-id="' + usuario.IdUsuario + '"' +
+                ' data-estado="' + (activo ? 'true' : 'false') + '"' +
+                ' title="' + accion + ' usuario ' + escapeHtml(getNombreCompleto(usuario)) + '"' +
+                ' aria-label="' + accion + ' usuario ' + escapeHtml(getNombreCompleto(usuario)) + '"' +
+                iconStyle + '>' +
+                svg +
+                '</button>';
+        }
+
+        function buildToggleCardButton(usuario) {
+            var activo = !!usuario.Estado;
+            var cls = ['btn-card-action', activo ? 'del' : '', 'js-toggle-user'].filter(Boolean).join(' ');
+            var iconStyle = activo ? '' : ' style="color:#16a34a"';
+            var accion = activo ? 'Desactivar' : 'Activar';
+            var svg = activo ? SVG_DEACTIVATE : SVG_ACTIVATE;
+
+            return '<button class="' + cls + '" type="button"' +
+                ' data-id="' + usuario.IdUsuario + '"' +
+                ' data-estado="' + (activo ? 'true' : 'false') + '"' +
+                iconStyle + '>' +
+                svg.replace('width="18" height="18"', 'width="16" height="16"') +
+                accion +
+                '</button>';
+        }
+
         function renderUsuarios() {
             if (!tableBody || !cardView) {
                 return;
@@ -263,8 +309,6 @@
                 var estadoTexto = usuario.Estado ? 'Activo' : 'Inactivo';
                 var estadoKey = getEstadoKey(usuario.Estado);
                 var fechaRegistro = formatDate(usuario.FechaRegistro);
-                var deleteDisabled = usuario.Estado ? '' : ' disabled';
-                var deleteClass = usuario.Estado ? '' : ' style="opacity:.45;cursor:not-allowed;"';
 
                 var row = document.createElement('tr');
                 row.className = 'user-row';
@@ -273,6 +317,9 @@
                 row.setAttribute('data-rol', rolKey);
                 row.setAttribute('data-estado', estadoKey);
                 row.setAttribute('data-registro', String(getDateValue(usuario.FechaRegistro)));
+                if (!usuario.Estado) {
+                    row.style.opacity = '0.65';
+                }
                 row.innerHTML =
                     '<td>' +
                         '<div class="user-cell">' +
@@ -293,15 +340,7 @@
                                     '<path d="M17 3L21 7L7 21H3V17L17 3Z" stroke="currentColor" stroke-width="1.5" fill="none" />' +
                                 '</svg>' +
                             '</a>' +
-                            '<button class="btn-action del js-delete-user" type="button" data-id="' + usuario.IdUsuario + '"' + deleteDisabled + deleteClass + ' title="Desactivar usuario ' + escapeHtml(nombreCompleto) + '" aria-label="Desactivar usuario ' + escapeHtml(nombreCompleto) + '">' +
-                                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none">' +
-                                    '<path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
-                                    '<path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
-                                    '<path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
-                                    '<path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />' +
-                                    '<path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />' +
-                                '</svg>' +
-                            '</button>' +
+                            buildToggleButton(usuario) +
                         '</div>' +
                     '</td>';
 
@@ -312,6 +351,9 @@
                 card.setAttribute('data-rol', rolKey);
                 card.setAttribute('data-estado', estadoKey);
                 card.setAttribute('data-registro', String(getDateValue(usuario.FechaRegistro)));
+                if (!usuario.Estado) {
+                    card.style.opacity = '0.65';
+                }
                 card.innerHTML =
                     '<div class="user-card-top">' +
                         '<div class="user-avatar lg ' + avatarClass + '" aria-hidden="true">' + escapeHtml(iniciales) + '</div>' +
@@ -337,16 +379,7 @@
                             '</svg>' +
                             'Editar' +
                         '</a>' +
-                        '<button class="btn-card-action del js-delete-user" type="button" data-id="' + usuario.IdUsuario + '"' + deleteDisabled + deleteClass + '>' +
-                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-                                '<path d="M4 7H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
-                                '<path d="M10 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
-                                '<path d="M14 11V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />' +
-                                '<path d="M5 7L6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19L19 7" stroke="currentColor" stroke-width="1.5" fill="none" />' +
-                                '<path d="M9 7V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V7" stroke="currentColor" stroke-width="1.5" fill="none" />' +
-                            '</svg>' +
-                            'Desactivar' +
-                        '</button>' +
+                        buildToggleCardButton(usuario) +
                     '</div>';
 
                 tableBody.appendChild(row);
@@ -415,16 +448,38 @@
         }
 
         function closeModal() {
-            actualDelete = null;
+            actualToggle = null;
             if (modal) {
                 modal.classList.remove('open');
             }
         }
 
-        function openDeleteModal(usuario) {
-            actualDelete = usuario;
+        function openToggleModal(usuario) {
+            actualToggle = usuario;
             if (!modal) {
                 return;
+            }
+
+            var activo = !!usuario.Estado;
+            var modalTitle = document.getElementById('deleteModalTitle');
+            var modalSubtitle = document.getElementById('modalSubtitle');
+            var modalWarningText = document.getElementById('modalWarningText');
+
+            if (modalTitle) {
+                modalTitle.textContent = activo ? 'Desactivar usuario' : 'Activar usuario';
+            }
+            if (modalSubtitle) {
+                modalSubtitle.textContent = activo
+                    ? 'El usuario quedará inactivo y no podrá iniciar sesión.'
+                    : 'El usuario quedará activo y podrá iniciar sesión nuevamente.';
+            }
+            if (modalWarningText) {
+                modalWarningText.textContent = activo
+                    ? 'El usuario conservará su registro histórico. Podrás reactivarlo en cualquier momento.'
+                    : 'El usuario recuperará acceso completo al sistema según su rol.';
+            }
+            if (btnDelete) {
+                btnDelete.textContent = activo ? 'Sí, desactivar' : 'Sí, activar';
             }
 
             if (modalName) modalName.textContent = getNombreCompleto(usuario);
@@ -440,35 +495,39 @@
             }
         }
 
-        async function eliminarUsuario() {
-            if (!actualDelete) {
+        async function toggleUsuario() {
+            if (!actualToggle) {
                 return;
             }
 
+            var nuevoEstado = !actualToggle.Estado;
+
             try {
-                var result = await postJson(apiBase + '/EliminarUsuario', {
-                    idUsuario: actualDelete.IdUsuario,
-                    usuario: getUsuarioActual()
+                var result = await postJson(apiBase + '/CambiarEstadoUsuario', {
+                    idUsuario: actualToggle.IdUsuario,
+                    estado: nuevoEstado,
+                    usuarioSesion: getUsuarioActual()
                 });
 
                 if (!result.Exitoso) {
-                    throw new Error(result.Mensaje || 'No fue posible desactivar el usuario.');
+                    throw new Error(result.Mensaje || 'No fue posible cambiar el estado del usuario.');
                 }
 
-                usuarios = usuarios.map(function (usuario) {
-                    if (usuario.IdUsuario === actualDelete.IdUsuario) {
-                        usuario.Estado = false;
+                var idActualizado = actualToggle.IdUsuario;
+                usuarios = usuarios.map(function (u) {
+                    if (u.IdUsuario === idActualizado) {
+                        u.Estado = nuevoEstado;
                     }
-                    return usuario;
+                    return u;
                 });
 
                 actualizarResumen();
                 aplicarFiltros();
                 closeModal();
-                showToast(result.Mensaje || 'Usuario desactivado correctamente.', 'success');
+                showToast(result.Mensaje || 'Estado actualizado correctamente.', 'success');
             } catch (error) {
                 closeModal();
-                showToast(error.message || 'No fue posible desactivar el usuario.', 'error');
+                showToast(error.message || 'No fue posible cambiar el estado del usuario.', 'error');
             }
         }
 
@@ -558,7 +617,7 @@
         }
 
         if (btnDelete) {
-            btnDelete.addEventListener('click', eliminarUsuario);
+            btnDelete.addEventListener('click', toggleUsuario);
         }
 
         document.addEventListener('keydown', function (event) {
@@ -568,18 +627,18 @@
         });
 
         document.addEventListener('click', function (event) {
-            var deleteButton = event.target.closest('.js-delete-user');
-            if (!deleteButton || deleteButton.disabled) {
+            var toggleButton = event.target.closest('.js-toggle-user');
+            if (!toggleButton) {
                 return;
             }
 
-            var id = parseInt(deleteButton.getAttribute('data-id') || '0', 10);
+            var id = parseInt(toggleButton.getAttribute('data-id') || '0', 10);
             var usuario = usuarios.find(function (item) {
                 return item.IdUsuario === id;
             });
 
-            if (usuario && usuario.Estado) {
-                openDeleteModal(usuario);
+            if (usuario) {
+                openToggleModal(usuario);
             }
         });
 

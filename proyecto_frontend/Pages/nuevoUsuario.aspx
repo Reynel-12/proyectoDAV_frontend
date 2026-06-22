@@ -136,14 +136,14 @@
                         </div>
                     </div>
 
-                    <div class="field">
+                    <%--<div class="field">
                         <label class="field-label" for="chkEstado">Estado</label>
                         <div class="field-hint">Los usuarios inactivos no podrán iniciar sesión.</div>
                         <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--clr-gray-700); margin-top: 10px;">
                             <input type="checkbox" id="chkEstado" checked="checked" />
                             Usuario activo
                         </label>
-                    </div>
+                    </div>--%>
                 </div>
 
                 <div class="required-legend">
